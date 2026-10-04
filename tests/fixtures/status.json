@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "status"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "source": {
+        "name": "remarkable",
+        "label": "reMarkable",
+        "mark": "rM",
+        "device": "your reMarkable",
+        "connected": false,
+        "detail": "not connected: run `jotted connect`"
+      },
+      "judge": "llm",
+      "watch": [],
+      "documents_read": 0,
+      "last_collected_at": null,
+      "items": {
+        "open": 4,
+        "done": 0,
+        "proposed": 1
+      },
+      "todo": {
+        "enabled": false,
+        "name": "To-do",
+        "folder": "/",
+        "published_at": null
+      },
+      "background": null
+    }
+  }
+}

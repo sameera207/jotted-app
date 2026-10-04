@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "items",
+    "add",
+    "Open",
+    "this",
+    "--propose",
+    "--agent",
+    "--source-kind",
+    "chat",
+    "--source-key",
+    "c-1",
+    "--source-url",
+    "javascript:alert(1)"
+  ],
+  "exit": 1,
+  "envelope": {
+    "v": 1,
+    "ok": false,
+    "error": {
+      "code": "invalid",
+      "message": "source.url must be an https link"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "items",
+    "reopen",
+    "2"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "id": 2,
+      "origin": "web",
+      "text": "Tag the 0.2 release",
+      "paper_text": "Tag the 0.2 release",
+      "written": false,
+      "bbox": null,
+      "status": "open",
+      "owner": "me",
+      "owner_name": null,
+      "p_action": 1,
+      "source": {
+        "doc_id": "web",
+        "name": "",
+        "folder": "",
+        "page": 0,
+        "anchor": "027d3ecec7504924ae941962d90156f7",
+        "kind": null,
+        "key": null,
+        "title": null,
+        "url": null,
+        "excerpt": null
+      },
+      "page": null,
+      "edited": false,
+      "slot": null,
+      "created_at": "2026-10-04T01:15:51.404303+00:00"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "version"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "version": "0.1.0",
+      "contract": 1,
+      "contract_min": 1,
+      "source_plugin": "remarkable",
+      "python": "3.11.15",
+      "bundled": true
+    }
+  }
+}

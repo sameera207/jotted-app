@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jotted · Connect your reMarkable</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1D1D1B}a:hover{color:#000}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.step{display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:10px;padding:16px 0;border-bottom:1px solid #E2E0D9}
+.step .b{width:18px;height:18px;border:1.5px solid #1D1D1B;position:relative;display:block;margin-top:2px}
+.step b{font-size:16px;font-weight:500;display:block}
+.step small{font-size:12px;color:#5E5D58;display:block;margin-top:2px}
+.step.done b{color:#6E6D68}
+.step.later .b{border-color:#A9A7A0}
+.step.later b{color:#5E5D58;font-weight:400}
+.code{font-family:'IBM Plex Mono',monospace;font-size:24px;letter-spacing:.5em;width:100%;max-width:300px;height:52px;padding:0 14px;border:0;border-bottom:2px solid #1D1D1B;background:transparent;outline:none;color:#1D1D1B;box-sizing:border-box}
+.code::placeholder{color:#B2B0A9}
+.go{display:inline-flex;align-items:center;height:44px;padding:0 22px;border-radius:22px;background:#1D1D1B;color:#F6F5F1;font-size:14px;font-weight:500;text-decoration:none}
+.go:hover{background:#000;color:#F6F5F1}
+.back{height:46px;padding:0 18px;border-radius:23px;font-size:14px;color:#3B3A37;text-decoration:none;display:inline-flex;align-items:center}
+.back:hover{background:#ECEAE4}
+</style>
+</helmet>
+<div style="min-height: 980px; background: #DEDCD6; display: flex; flex-direction: column; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #1D1D1B">
+
+<header style="height: 44px; display: flex; align-items: center; gap: 16px; padding: 0 16px; border-bottom: 1px solid #CFCDC6; flex: none">
+<div aria-hidden="true" style="display: flex; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span></div>
+<div style="flex: 1; text-align: center; font-size: 13px; font-weight: 500; color: #3B3A37">Jotted</div>
+<div style="width: 52px"></div>
+</header>
+
+<main style="flex: 1; padding: 48px 24px; display: flex; justify-content: center">
+<section style="width: 100%; max-width: 680px; background: #F6F5F1; border-radius: 2px; box-shadow: 0 1px 2px rgba(30,28,20,.08), 0 10px 32px rgba(30,28,20,.10); padding: 40px 48px 36px 52px; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 600">Set up Jotted</h1>
+<span style="font-size: 12px; color: #5E5D58">step 2 of 5</span>
+</div>
+<p style="margin: 8px 0 0; font-size: 14px; color: #3B3A37">Five steps, once. Everything stays on this computer.</p>
+<div style="height: 1px; background: #8A8984; margin: 18px 0 0"></div>
+
+<div class="step done"><span class="b"><svg width="30" height="28" viewBox="0 0 30 28" style="position: absolute; left: -4px; top: -10px" aria-hidden="true"><path d="M4 15c3 2 5 5 7 8 4-8 10-16 17-21" fill="none" stroke="#1D1D1B" stroke-width="2.4" stroke-linecap="round"></path></svg></span><div><b>Prepare this computer</b><small>Folder for settings and keys made · rmapi downloaded, checksum verified</small></div></div>
+
+<div class="step"><span class="b"></span><div style="display: flex; flex-direction: column; gap: 14px">
+<div><b>Connect your reMarkable</b><small>Sign in at my.remarkable.com, open “Connect a desktop app” and type the one-time code here.</small></div>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; color: #3B3A37">One-time code</span><input class="code" maxlength="8" placeholder="abcdefgh" autocomplete="off"></label>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px"><a class="go" href="Onboarding.dc.html">Connect</a><a href="https://my.remarkable.com" style="font-size: 13px">Get a code</a></div>
+<span style="font-size: 12px; color: #5E5D58">The code works once. Jotted keeps the token it gets in your app folder, readable by your user only.</span>
+</div></div>
+
+<div class="step later"><span class="b"></span><div><b>Choose a language model and add its key</b><small>Anthropic or OpenAI</small></div></div>
+<div class="step later"><span class="b" style="border-style: dashed"></span><div><b>Add plugins</b><small>Optional · Jev from TypeSafe</small></div></div>
+<div class="step later" style="border-bottom: 0"><span class="b"></span><div><b>Pick the folders to read</b><small>You can change these any time</small></div></div>
+
+<div style="margin-top: 20px"><a class="back" href="Welcome.dc.html">Back</a></div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":980}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

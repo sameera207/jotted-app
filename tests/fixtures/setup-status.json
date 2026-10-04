@@ -1,0 +1,55 @@
+{
+  "argv": [
+    "setup",
+    "status"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "complete": false,
+      "steps": [
+        {
+          "id": "app_folder",
+          "title": "A home for settings and data",
+          "done": true,
+          "detail": "/Users/you/Library/Application Support/jotted"
+        },
+        {
+          "id": "remarkable.rmapi",
+          "title": "rmapi, to reach the reMarkable cloud",
+          "done": false,
+          "command": "setup prepare"
+        },
+        {
+          "id": "remarkable.connect",
+          "title": "Your reMarkable",
+          "done": false,
+          "command": "connect --stdin"
+        },
+        {
+          "id": "llm",
+          "title": "The language model's key",
+          "done": false,
+          "provider": "anthropic",
+          "model": "claude-opus-5",
+          "command": "ai key llm --stdin"
+        },
+        {
+          "id": "jev",
+          "title": "The Jev plugin",
+          "done": false,
+          "optional": true,
+          "command": "ai key jev --stdin"
+        },
+        {
+          "id": "folders",
+          "title": "A watched folder",
+          "done": false,
+          "command": "watch add PATH"
+        }
+      ]
+    }
+  }
+}

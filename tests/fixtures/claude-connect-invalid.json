@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "claude",
+    "connect",
+    "--command",
+    "/Users/you/Library/Application Support/jotted/nope/jotted"
+  ],
+  "exit": 1,
+  "envelope": {
+    "v": 1,
+    "ok": false,
+    "error": {
+      "code": "invalid",
+      "message": "/Users/you/Library/Application Support/jotted/nope/jotted isn't an executable file"
+    }
+  }
+}

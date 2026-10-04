@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "items",
+    "dismiss",
+    "3"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {}
+  }
+}

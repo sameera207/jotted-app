@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "claude",
+    "connect"
+  ],
+  "exit": 2,
+  "envelope": {
+    "v": 1,
+    "ok": false,
+    "error": {
+      "code": "config",
+      "message": "Claude Desktop's settings folder isn't there (/Users/you/Library/Application Support/Claude). Install Claude Desktop and open it once, then try again."
+    }
+  }
+}

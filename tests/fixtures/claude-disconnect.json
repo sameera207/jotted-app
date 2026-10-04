@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "claude",
+    "disconnect"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "changed": true,
+      "config_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json",
+      "backup_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json.bak-20261004T011603Z",
+      "restart_required": true
+    }
+  }
+}

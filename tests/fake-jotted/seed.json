@@ -1,0 +1,30 @@
+{
+  "comment": "Rows the fake starts with. Each is the recorded item (tests/fixtures/items-add.json) with these fields changed; the fake refuses a row whose keys differ from the recorded shape. Names and text are stand-ins, as in the mockups.",
+  "watch": ["/Meeting Notes", "/Work", "/Home"],
+  "library": {"folders": [{"path": "/Meeting Notes"}, {"path": "/Work"}, {"path": "/Home"}, {"path": "/Journal"}, {"path": "/Books & PDFs"}], "documents": [{"path": "/Meeting Notes/Weekly sync", "folder": "/Meeting Notes", "id": "3f6c2a10-8d1e-4f5b-9a77-1c2d3e4f5a01", "own": false, "read": true, "baseline_pages": 0}, {"path": "/Meeting Notes/Design crit", "folder": "/Meeting Notes", "id": "7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d", "own": false, "read": true, "baseline_pages": 0}, {"path": "/Meeting Notes/Planning offsite", "folder": "/Meeting Notes", "id": "0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f", "own": false, "read": false, "baseline_pages": 0}, {"path": "/Work/1:1 Priya", "folder": "/Work", "id": "5d4c3b2a-1e0f-4a9b-8c7d-6e5f4a3b2c1d", "own": false, "read": true, "baseline_pages": 0}, {"path": "/Home/Weekend", "folder": "/Home", "id": "2b3c4d5e-6f70-4812-9a3b-4c5d6e7f8091", "own": false, "read": true, "baseline_pages": 0}, {"path": "/Journal/2026", "folder": "/Journal", "id": "6e7f8091-a2b3-4c4d-9e5f-60718293a4b5", "own": false, "read": false, "baseline_pages": 0}, {"path": "/Books & PDFs/Designing Data-Intensive Applications", "folder": "/Books & PDFs", "id": "8091a2b3-c4d5-4e6f-8071-8293a4b5c6d7", "own": false, "read": false, "baseline_pages": 0}, {"path": "/To-do", "folder": "/", "id": "9b0e7d52-4c3a-4e21-8f60-aa11bb22cc33", "own": true, "read": true, "baseline_pages": 0}]},
+  "items": [
+    {"origin": "remarkable", "text": "Book the retro room for Thursday", "paper_text": "Book the retro room for Thursday", "p_action": 0.93, "slot": 0,
+     "source": {"doc_id": "3f6c2a10-8d1e-4f5b-9a77-1c2d3e4f5a01", "name": "Weekly sync", "folder": "/Meeting Notes", "page": 3, "anchor": "1:212"}},
+    {"origin": "remarkable", "text": "send Priya the onboarding doc", "paper_text": "send Priya the onboarding doc", "written": true, "p_action": 0.88, "slot": 1,
+     "source": {"doc_id": "9b0e7d52-4c3a-4e21-8f60-aa11bb22cc33", "name": "To-do", "folder": "/", "page": 1, "anchor": "1:340"}},
+    {"origin": "remarkable", "text": "Draft the Q4 hiring plan", "paper_text": "Draft the Q4 hiring plan", "p_action": 0.81, "slot": 2,
+     "source": {"doc_id": "5d4c3b2a-1e0f-4a9b-8c7d-6e5f4a3b2c1d", "name": "1:1 Priya", "folder": "/Work", "page": 11, "anchor": "1:87"}},
+    {"origin": "remarkable", "text": "Share empty-state sketches with the team", "paper_text": "Share empty-state sketches with the team", "owner": "someone_else", "p_action": 0.77, "slot": 3,
+     "source": {"doc_id": "7a8b9c0d-1e2f-4a3b-9c4d-5e6f7a8b9c0d", "name": "Design crit", "folder": "/Meeting Notes", "page": 2, "anchor": "1:45"}},
+    {"text": "Tag the 0.2 release", "paper_text": "Tag the 0.2 release", "slot": 4},
+    {"origin": "remarkable", "text": "Confirm the offsite venue", "paper_text": "Confirm the offsite venue", "owner": "someone_else", "p_action": 0.84, "slot": 5,
+     "source": {"doc_id": "3f6c2a10-8d1e-4f5b-9a77-1c2d3e4f5a01", "name": "Weekly sync", "folder": "/Meeting Notes", "page": 4, "anchor": "1:510"}},
+    {"origin": "remarkable", "text": "Ask Sam whether the venue is booked", "paper_text": "ask Sam if venue booked?", "owner": "unclear", "p_action": 0.72, "slot": 6, "edited": true,
+     "source": {"doc_id": "3f6c2a10-8d1e-4f5b-9a77-1c2d3e4f5a01", "name": "Weekly sync", "folder": "/Meeting Notes", "page": 4, "anchor": "1:530"}},
+    {"origin": "remarkable", "text": "Water the plants", "paper_text": "Water the plants", "status": "done", "p_action": 0.9, "slot": 7,
+     "source": {"doc_id": "2b3c4d5e-6f70-4812-9a3b-4c5d6e7f8091", "name": "Weekend", "folder": "/Home", "page": 1, "anchor": "1:12"}},
+    {"origin": "remarkable", "text": "Renew the car insurance", "paper_text": "Renew the car insurance", "written": true, "status": "done", "p_action": 0.95, "slot": 21,
+     "source": {"doc_id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d", "name": "To-do", "folder": "/", "page": 1, "anchor": "1:77"}},
+    {"origin": "agent", "text": "Send Dana the rollout plan", "paper_text": "Send Dana the rollout plan", "status": "proposed",
+     "source": {"doc_id": "agent", "name": "Platform sync, 29 Sep", "kind": "doc", "key": "platform-sync-29-sep-l14", "title": "Platform sync, 29 Sep",
+                "url": "https://docs.example.com/d/platform-sync", "excerpt": "Sam to send Dana the rollout plan by Friday"}},
+    {"origin": "agent", "text": "Review the Q4 budget draft", "paper_text": "Review the Q4 budget draft", "status": "proposed", "owner": "someone_else", "owner_name": "Priya",
+     "source": {"doc_id": "agent", "name": "Re: Q4 budget", "kind": "mail", "key": "msg-8812", "title": "Re: Q4 budget", "url": null,
+                "excerpt": "Priya will circulate the draft for review"}}
+  ]
+}

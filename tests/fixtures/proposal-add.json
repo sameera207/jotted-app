@@ -1,0 +1,59 @@
+{
+  "argv": [
+    "items",
+    "add",
+    "Send",
+    "Dana",
+    "the",
+    "rollout",
+    "plan",
+    "--propose",
+    "--agent",
+    "--owner",
+    "mine",
+    "--source-kind",
+    "doc",
+    "--source-key",
+    "platform-sync-29-sep-l14",
+    "--source-title",
+    "Platform sync, 29 Sep",
+    "--source-url",
+    "https://docs.example.com/d/platform-sync",
+    "--excerpt",
+    "Sam to send Dana the rollout plan by Friday"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "id": 4,
+      "origin": "agent",
+      "text": "Send Dana the rollout plan",
+      "paper_text": "Send Dana the rollout plan",
+      "written": false,
+      "bbox": null,
+      "status": "proposed",
+      "owner": "me",
+      "owner_name": "",
+      "p_action": 1,
+      "source": {
+        "doc_id": "agent",
+        "name": "Platform sync, 29 Sep",
+        "folder": "",
+        "page": 0,
+        "anchor": "12780986f3d54e9d88ccc397fbdab714",
+        "kind": "doc",
+        "key": "platform-sync-29-sep-l14",
+        "title": "Platform sync, 29 Sep",
+        "url": "https://docs.example.com/d/platform-sync",
+        "excerpt": "Sam to send Dana the rollout plan by Friday"
+      },
+      "page": null,
+      "edited": false,
+      "slot": null,
+      "created_at": "2026-10-04T01:15:53.187475+00:00",
+      "created": true
+    }
+  }
+}

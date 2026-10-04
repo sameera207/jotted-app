@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jotted · Welcome</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1D1D1B}a:hover{color:#000}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.req{display:grid;grid-template-columns:36px minmax(0,1fr) auto;column-gap:10px;align-items:start;padding:14px 0;border-bottom:1px solid #E2E0D9}
+.box{width:44px;height:44px;display:grid;place-items:center;margin:-12px 0 0 -13px}
+.box span{width:18px;height:18px;border:1.5px solid #1D1D1B;position:relative;display:block}
+.box:hover span{background:#ECEAE4}
+.req b{display:block;font-size:16px;font-weight:500}
+.req small{display:block;font-size:13px;color:#3B3A37;margin-top:3px;line-height:1.45}
+.tag{font-size:11px;font-weight:500;color:#5E5D58;border:1px solid #B2B0A9;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.go{display:inline-flex;align-items:center;height:46px;padding:0 24px;border-radius:23px;background:#1D1D1B;color:#F6F5F1;font-size:14px;font-weight:500;text-decoration:none}
+.go:hover{background:#000;color:#F6F5F1}
+.wait{display:inline-flex;align-items:center;height:46px;padding:0 24px;border-radius:23px;border:1.5px dashed #A9A7A0;color:#5E5D58;font-size:14px}
+</style>
+</helmet>
+<div style="min-height: 980px; background: #DEDCD6; display: flex; flex-direction: column; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #1D1D1B">
+
+<header style="height: 44px; display: flex; align-items: center; gap: 16px; padding: 0 16px; border-bottom: 1px solid #CFCDC6; flex: none">
+<div aria-hidden="true" style="display: flex; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span></div>
+<div style="flex: 1; text-align: center; font-size: 13px; font-weight: 500; color: #3B3A37">Jotted</div>
+<div style="width: 52px"></div>
+</header>
+
+<main style="flex: 1; padding: 48px 24px; display: flex; justify-content: center">
+<section style="width: 100%; max-width: 640px; background: #F6F5F1; border-radius: 2px; box-shadow: 0 1px 2px rgba(30,28,20,.08), 0 10px 32px rgba(30,28,20,.10); padding: 44px 48px 40px 52px; box-sizing: border-box">
+<div style="font-family: 'Caveat', cursive; font-size: 32px; font-weight: 600; color: #3B3A37">hello —</div>
+<h1 style="margin: 2px 0 0; font-size: 30px; font-weight: 600; letter-spacing: -.01em">Your handwriting, as a to-do list</h1>
+<p style="margin: 10px 0 0; font-size: 15px; line-height: 1.55; color: #3B3A37">Jotted reads the notebooks you choose on your reMarkable, picks out the lines that are tasks and whose they are, and keeps one list: here, and on the tablet where you can tick it with the pen.</p>
+
+<h2 style="margin: 30px 0 0; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #5E5D58">Before you start</h2>
+<div style="height: 1px; background: #8A8984; margin: 8px 0 0"></div>
+
+<sc-for list="{{reqs}}" as="r" hint-placeholder-count="4">
+<div class="req">
+<button class="box" aria-label="{{r.label}}" aria-pressed="{{r.on}}" onClick="{{r.toggle}}"><span><sc-if value="{{r.on}}" hint-placeholder-val="{{false}}"><svg width="30" height="28" viewBox="0 0 30 28" style="position: absolute; left: -4px; top: -10px" aria-hidden="true"><path d="M4 15c3 2 5 5 7 8 4-8 10-16 17-21" fill="none" stroke="#1D1D1B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if></span></button>
+<div><b>{{r.title}}</b><small>{{r.detail}}</small><a href="{{r.href}}" style="display: inline-block; margin-top: 6px; font-size: 13px">{{r.link}}</a></div>
+<span class="tag">{{r.tag}}</span>
+</div>
+</sc-for>
+
+<div style="margin-top: 22px; display: flex; gap: 12px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: #3B3A37">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><rect x="5" y="10" width="14" height="10" rx="1"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+<span>Jotted runs on this computer. Images of new lines go straight to the model provider you pick, with your own key. Nothing passes through a server of ours.</span>
+</div>
+
+<div style="margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+<sc-if value="{{ready}}" hint-placeholder-val="{{false}}"><a class="go" href="SetupConnect.dc.html">I have these. Set up</a></sc-if>
+<sc-if value="{{notReady}}" hint-placeholder-val="{{true}}"><span class="wait">Tick the three you need to continue</span></sc-if>
+<span style="font-size: 12px; color: #5E5D58">About 5 minutes</span>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":980}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { on: { tablet: true } };
+  }
+  renderVals() {
+    const R = [
+      { id: 'tablet', title: 'A reMarkable with cloud sync', detail: 'Your notes have to reach reMarkable Cloud, which needs a Connect subscription. Jotted works with any tablet that syncs.', link: 'About Connect', href: 'https://remarkable.com', tag: 'Required', need: true },
+      { id: 'account', title: 'Your reMarkable account', detail: 'You sign in at my.remarkable.com once to get a one-time code that connects this computer.', link: 'my.remarkable.com', href: 'https://my.remarkable.com', tag: 'Required', need: true },
+      { id: 'llm', title: 'An API key for a language model', detail: 'Anthropic (Claude) or OpenAI. The model reads your handwriting; you pay the provider directly for what it reads, usually cents a day.', link: 'Get an Anthropic key', href: 'https://console.anthropic.com/settings/keys', tag: 'Required', need: true },
+      { id: 'jev', title: 'A TypeSafe key, for the Jev plugin', detail: 'Jev judges which lines are tasks and whose they are. Skip it and the language model does that too. You can add it later.', link: 'Or add it later in Settings', href: 'Settings.dc.html', tag: 'Optional', need: false }
+    ];
+    const on = this.state.on;
+    const ready = R.filter((r) => r.need).every((r) => on[r.id]);
+    return {
+      ready, notReady: !ready,
+      reqs: R.map((r) => Object.assign({}, r, {
+        on: !!on[r.id],
+        label: (on[r.id] ? 'Untick: ' : 'I have this: ') + r.title,
+        toggle: () => this.setState({ on: Object.assign({}, on, { [r.id]: !on[r.id] }) })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

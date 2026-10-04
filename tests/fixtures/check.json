@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "check"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {}
+  }
+}

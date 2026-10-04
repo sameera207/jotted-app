@@ -1,0 +1,126 @@
+{
+  "argv": [
+    "items",
+    "--status",
+    "all"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": [
+      {
+        "id": 1,
+        "origin": "web",
+        "text": "Book the retro room for Thursday",
+        "paper_text": "Book the retro room for Thursday",
+        "written": false,
+        "bbox": null,
+        "status": "open",
+        "owner": "me",
+        "owner_name": null,
+        "p_action": 1,
+        "source": {
+          "doc_id": "web",
+          "name": "",
+          "folder": "",
+          "page": 0,
+          "anchor": "257c832af3024615a27e939e33c19e83",
+          "kind": null,
+          "key": null,
+          "title": null,
+          "url": null,
+          "excerpt": null
+        },
+        "page": null,
+        "edited": false,
+        "slot": null,
+        "created_at": "2026-10-04T01:15:51.106180+00:00"
+      },
+      {
+        "id": 2,
+        "origin": "web",
+        "text": "Tag the 0.2 release",
+        "paper_text": "Tag the 0.2 release",
+        "written": false,
+        "bbox": null,
+        "status": "open",
+        "owner": "me",
+        "owner_name": null,
+        "p_action": 1,
+        "source": {
+          "doc_id": "web",
+          "name": "",
+          "folder": "",
+          "page": 0,
+          "anchor": "027d3ecec7504924ae941962d90156f7",
+          "kind": null,
+          "key": null,
+          "title": null,
+          "url": null,
+          "excerpt": null
+        },
+        "page": null,
+        "edited": false,
+        "slot": null,
+        "created_at": "2026-10-04T01:15:51.404303+00:00"
+      },
+      {
+        "id": 4,
+        "origin": "agent",
+        "text": "Send Dana the rollout plan",
+        "paper_text": "Send Dana the rollout plan",
+        "written": false,
+        "bbox": null,
+        "status": "open",
+        "owner": "me",
+        "owner_name": "",
+        "p_action": 1,
+        "source": {
+          "doc_id": "agent",
+          "name": "Platform sync, 29 Sep",
+          "folder": "",
+          "page": 0,
+          "anchor": "12780986f3d54e9d88ccc397fbdab714",
+          "kind": "doc",
+          "key": "platform-sync-29-sep-l14",
+          "title": "Platform sync, 29 Sep",
+          "url": "https://docs.example.com/d/platform-sync",
+          "excerpt": "Sam to send Dana the rollout plan by Friday"
+        },
+        "page": null,
+        "edited": false,
+        "slot": null,
+        "created_at": "2026-10-04T01:15:53.187475+00:00"
+      },
+      {
+        "id": 7,
+        "origin": "agent",
+        "text": "Call the bank about the card",
+        "paper_text": "Call the bank about the card",
+        "written": false,
+        "bbox": null,
+        "status": "open",
+        "owner": "me",
+        "owner_name": null,
+        "p_action": 1,
+        "source": {
+          "doc_id": "agent",
+          "name": "",
+          "folder": "",
+          "page": 0,
+          "anchor": "68e048c98bae4e38b41097c97601d88e",
+          "kind": null,
+          "key": null,
+          "title": null,
+          "url": null,
+          "excerpt": null
+        },
+        "page": null,
+        "edited": false,
+        "slot": null,
+        "created_at": "2026-10-04T01:15:54.374576+00:00"
+      }
+    ]
+  }
+}

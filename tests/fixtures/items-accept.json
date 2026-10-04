@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "items",
+    "accept",
+    "4"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "accepted": [
+        4
+      ],
+      "skipped": []
+    }
+  }
+}

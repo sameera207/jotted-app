@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jotted · Set up</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1D1D1B}a:hover{color:#000}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.step{display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:10px;padding:16px 0;border-bottom:1px solid #E2E0D9}
+.step .b{width:18px;height:18px;border:1.5px solid #1D1D1B;position:relative;display:block;margin-top:2px}
+.step b{font-size:16px;font-weight:500;display:block}
+.step small{font-size:12px;color:#5E5D58;display:block;margin-top:2px}
+.step.done b{color:#6E6D68}
+.step.later .b{border-color:#A9A7A0}
+.step.later b{color:#5E5D58;font-weight:400}
+.prov{display:flex;flex-direction:column;gap:4px;min-height:84px;padding:12px 14px;border:1px solid #B2B0A9;border-radius:4px;background:transparent}
+.prov:hover{border-color:#1D1D1B}
+.prov.on{border:1.5px solid #1D1D1B;background:#ECEAE4}
+.prov.off{border-style:dashed;cursor:default;color:#5E5D58}
+.prov .n{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.prov .d{font-size:12px;color:#3B3A37}
+.dot{width:14px;height:14px;border:1.5px solid #1D1D1B;border-radius:8px;display:grid;place-items:center;flex:none;box-sizing:border-box}
+.dot i{width:6px;height:6px;border-radius:3px;background:#1D1D1B;display:block}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#3B3A37}
+.key{font-family:'IBM Plex Mono',monospace;font-size:14px;height:44px;padding:0 2px;border:0;border-bottom:2px solid #1D1D1B;background:transparent;outline:none;color:#1D1D1B;width:100%}
+.key::placeholder{color:#A9A7A0}
+.sel{font:inherit;font-size:14px;height:44px;border:0;border-bottom:1px solid #8A8984;background:transparent;color:#1D1D1B;width:100%}
+.btn{height:40px;padding:0 16px;border:1px solid #1D1D1B;border-radius:20px;font-size:13px;font-weight:500;white-space:nowrap}
+.btn:hover{background:#1D1D1B;color:#F6F5F1}
+.ok{font-size:12px;color:#1D1D1B;display:flex;align-items:center;gap:6px}
+.plug{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:14px;border:1px solid #CFCDC6;border-radius:4px}
+.go{height:46px;padding:0 24px;border-radius:23px;background:#1D1D1B;color:#F6F5F1;font-size:14px;font-weight:500}
+.go:hover{background:#000}
+.back{height:46px;padding:0 18px;border-radius:23px;font-size:14px;color:#3B3A37;text-decoration:none;display:inline-flex;align-items:center}
+.back:hover{background:#ECEAE4}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #DEDCD6; display: flex; flex-direction: column; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #1D1D1B">
+
+<header style="height: 44px; display: flex; align-items: center; gap: 16px; padding: 0 16px; border-bottom: 1px solid #CFCDC6; flex: none">
+<div aria-hidden="true" style="display: flex; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span><span style="width: 12px; height: 12px; border-radius: 6px; border: 1px solid #9C9A93; display: block"></span></div>
+<div style="flex: 1; text-align: center; font-size: 13px; font-weight: 500; color: #3B3A37">Jotted</div>
+<div style="width: 52px"></div>
+</header>
+
+<main style="flex: 1; padding: 48px 24px; display: flex; justify-content: center">
+<section style="width: 100%; max-width: 680px; background: #F6F5F1; border-radius: 2px; box-shadow: 0 1px 2px rgba(30,28,20,.08), 0 10px 32px rgba(30,28,20,.10); padding: 40px 48px 36px 52px; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 600">Set up Jotted</h1>
+<span style="font-size: 12px; color: #5E5D58">step 3 of 5</span>
+</div>
+<div style="height: 1px; background: #8A8984; margin: 14px 0 0"></div>
+
+<div class="step done"><span class="b"><svg width="30" height="28" viewBox="0 0 30 28" style="position: absolute; left: -4px; top: -10px" aria-hidden="true"><path d="M4 15c3 2 5 5 7 8 4-8 10-16 17-21" fill="none" stroke="#1D1D1B" stroke-width="2.4" stroke-linecap="round"></path></svg></span><div><b>Prepare this computer</b><small>Folder for settings and keys made · rmapi downloaded, checksum verified</small></div></div>
+<div class="step done"><span class="b"><svg width="30" height="28" viewBox="0 0 30 28" style="position: absolute; left: -4px; top: -10px" aria-hidden="true"><path d="M4 15c3 2 5 5 7 8 4-8 10-16 17-21" fill="none" stroke="#1D1D1B" stroke-width="2.4" stroke-linecap="round"></path></svg></span><div><b>Connect your reMarkable</b><small>Connected with a one-time code</small></div></div>
+
+<div class="step"><span class="b"></span><div style="display: flex; flex-direction: column; gap: 16px">
+<div><b>Choose a language model</b><small>Jotted sends the model a picture of each new line you wrote; the model turns it into text. It also decides whether the line is a task, unless a plugin does that.</small></div>
+<div role="group" aria-label="Provider" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px">
+<sc-for list="{{providers}}" as="p" hint-placeholder-count="2">
+<button class="{{p.cls}}" aria-pressed="{{p.on}}" onClick="{{p.pick}}"><span class="n"><span class="dot"><sc-if value="{{p.on}}" hint-placeholder-val="{{false}}"><i></i></sc-if></span>{{p.name}}</span><span class="d">{{p.desc}}</span></button>
+</sc-for>
+<div class="prov off" aria-disabled="true"><span class="n" style="font-weight: 500">More providers</span><span class="d" style="color: #5E5D58">Gemini, local models… added as plugins</span></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px 20px; align-items: end">
+<label class="fl" style="grid-column: 1 / -1"><span>{{keyLabel}}</span><input class="key" type="password" placeholder="{{keyHint}}" autocomplete="off"></label>
+<label class="fl"><span>Model <span style="color: #5E5D58">· needs to read images</span></span><select class="sel"><option>{{modelDefault}}</option><option>Other…</option></select></label>
+<div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap"><button class="btn">Check key</button><a href="{{keyUrl}}" style="font-size: 13px">Get a key</a></div>
+</div>
+<span style="font-size: 12px; color: #5E5D58">Saved on this computer only, readable by your user. A key exported in your shell takes precedence.</span>
+</div></div>
+
+<div class="step"><span class="b" style="border-style: dashed"></span><div style="display: flex; flex-direction: column; gap: 14px">
+<div><b>Add plugins <span style="font-weight: 400; color: #5E5D58; font-size: 13px">· optional</span></b><small>Plugins can take over a job from the language model. Add a key to turn one on; remove it to turn it off.</small></div>
+<div class="plug">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap"><span style="font-size: 14px; font-weight: 600">Jev <span style="font-weight: 400; color: #5E5D58">from TypeSafe</span></span><span style="font-size: 11px; color: #5E5D58">Judges actions and owners</span></div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: end">
+<label class="fl"><span>TypeSafe API key</span><input class="key" type="password" placeholder="ts_…" autocomplete="off"></label>
+<button class="btn">Check key</button>
+</div>
+</div>
+<span style="font-size: 12px; color: #5E5D58">Plugins you install later show up here and in Settings.</span>
+</div></div>
+
+<div class="step later" style="border-bottom: 0"><span class="b"></span><div><b>Pick the folders to read</b><small>You can change these any time</small></div></div>
+
+<div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+<a class="back" href="SetupConnect.dc.html">Back</a>
+<div style="display: flex; align-items: center; gap: 14px"><span style="font-size: 12px; color: #5E5D58">Skip plugins</span><button class="go">Continue</button></div>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1240}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { provider: 'anthropic' };
+  }
+  renderVals() {
+    const P = [
+      { id: 'anthropic', name: 'Anthropic', desc: 'Claude · what Jotted uses today', label: 'Anthropic API key', hint: 'sk-ant-…', url: 'https://console.anthropic.com/settings/keys', model: 'claude-opus-5 (default)' },
+      { id: 'openai', name: 'OpenAI', desc: 'Needs a new adapter first', label: 'OpenAI API key', hint: 'sk-…', url: 'https://platform.openai.com/api-keys', model: '[an OpenAI model that reads images]' }
+    ];
+    const cur = P.find((p) => p.id === this.state.provider) || P[0];
+    return {
+      keyLabel: cur.label, keyHint: cur.hint, keyUrl: cur.url, modelDefault: cur.model,
+      providers: P.map((p) => ({
+        name: p.name, desc: p.desc, on: p.id === cur.id,
+        cls: p.id === cur.id ? 'prov on' : 'prov',
+        pick: () => this.setState({ provider: p.id })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

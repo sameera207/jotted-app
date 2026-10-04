@@ -1,0 +1,3 @@
+#!/bin/sh
+# The fake `jotted`: JOTTED_BIN=tests/fake-jotted/jotted. See fake.cjs.
+exec node "$(dirname "$0")/fake.cjs" "$@"

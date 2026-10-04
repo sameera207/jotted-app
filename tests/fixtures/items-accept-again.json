@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "items",
+    "accept",
+    "4"
+  ],
+  "exit": 1,
+  "envelope": {
+    "v": 1,
+    "ok": false,
+    "error": {
+      "code": "conflict",
+      "message": "Not proposed: #4"
+    }
+  }
+}

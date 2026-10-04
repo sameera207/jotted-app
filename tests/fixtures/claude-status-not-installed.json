@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "claude",
+    "status"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "configured": false,
+      "config_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json",
+      "command": null,
+      "command_exists": false,
+      "matches_current": false,
+      "admin": false,
+      "installed": false,
+      "env": {}
+    }
+  }
+}

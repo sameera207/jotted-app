@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "claude",
+    "connect",
+    "--command",
+    "/usr/local/bin/jotted"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "changed": true,
+      "config_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json",
+      "backup_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json.bak-20261004T011602Z",
+      "restart_required": true,
+      "entry": {
+        "command": "/usr/local/bin/jotted",
+        "args": [
+          "mcp"
+        ],
+        "env": {
+          "JOTTED_CONFIG": "/Users/you/Library/Application Support/jotted/config.toml",
+          "JOTTED_HOME": "/Users/you/Library/Application Support/jotted/home",
+          "JOTTED_BUNDLED": "1"
+        }
+      },
+      "dry_run": false
+    }
+  }
+}

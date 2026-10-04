@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "settings",
+    "set",
+    "poll_interval_s",
+    "nope"
+  ],
+  "exit": 1,
+  "envelope": {
+    "v": 1,
+    "ok": false,
+    "error": {
+      "code": "invalid",
+      "message": "invalid literal for int() with base 10: 'nope'"
+    }
+  }
+}

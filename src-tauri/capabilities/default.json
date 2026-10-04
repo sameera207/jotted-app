@@ -1,0 +1,18 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The main window and the menu bar popover: they listen to Jotted's events and call the app's own commands (the runner). Links open in the browser for https only; Claude Desktop's settings file can be shown in the Finder; open at login; the popover hides itself.",
+  "windows": ["main", "tray"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-hide",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [{ "url": "https://*" }]
+    },
+    "opener:allow-reveal-item-in-dir",
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "autostart:allow-is-enabled"
+  ]
+}

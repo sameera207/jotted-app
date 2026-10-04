@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "items",
+    "done",
+    "999"
+  ],
+  "exit": 1,
+  "envelope": {
+    "v": 1,
+    "ok": false,
+    "error": {
+      "code": "not_found",
+      "message": "no item 999"
+    }
+  }
+}

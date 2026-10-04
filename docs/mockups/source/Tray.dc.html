@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jotted · Menu bar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1D1D1B}a:hover{color:#000}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.r{display:grid;grid-template-columns:32px minmax(0,1fr);align-items:center;min-height:48px;border-bottom:1px solid #E2E0D9;font-size:14px}
+.r .b{width:16px;height:16px;border:1.5px solid #1D1D1B;display:block;position:relative}
+.r small{display:block;font-size:11px;color:#5E5D58;margin-top:1px}
+.add{font:inherit;font-size:14px;width:100%;height:44px;border:0;border-bottom:1.5px solid #1D1D1B;background:transparent;outline:none;color:#1D1D1B}
+.add::placeholder{color:#8A8984}
+.ic{width:36px;height:36px;border-radius:18px;display:grid;place-items:center}
+.ic:hover{background:#E9E7E0}
+</style>
+</helmet>
+<div style="width: 380px; height: 560px; box-sizing: border-box; padding: 14px 10px 10px; background: #DEDCD6; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #1D1D1B; position: relative">
+<div aria-hidden="true" style="position: absolute; top: 8px; left: 50%; margin-left: -8px; width: 16px; height: 16px; background: #F6F5F1; transform: rotate(45deg); border-radius: 2px"></div>
+<div style="position: relative; height: 536px; background: #F6F5F1; border-radius: 10px; box-shadow: 0 1px 2px rgba(30,28,20,.10), 0 12px 32px rgba(30,28,20,.16); padding: 16px 18px 12px 20px; box-sizing: border-box; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="font-size: 18px; font-weight: 600; flex: 1">To-do <span style="font-size: 12px; font-weight: 400; color: #5E5D58">· 6 open</span></span>
+<button class="ic" aria-label="Check now"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"></path></svg></button>
+</div>
+<label style="display: block; margin: 6px 0 4px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Quick add</span><input class="add" placeholder="Quick add…" autocomplete="off"></label>
+<div style="flex: 1; overflow: hidden">
+<div class="r"><span class="b"></span><span>Book the retro room for Thursday<small>Weekly sync · p3</small></span></div>
+<div class="r"><span class="b"></span><span style="font-family: 'Caveat', cursive; font-size: 22px; line-height: 1.1">send Priya the onboarding doc<small style="font-family: 'IBM Plex Sans', sans-serif">On the To-do</small></span></div>
+<div class="r"><span class="b"></span><span>Draft the Q4 hiring plan<small>1:1 Priya · p11</small></span></div>
+<div class="r"><span class="b"></span><span>Tag the 0.2 release<small>Added here</small></span></div>
+<div class="r"><span class="b"><svg width="26" height="24" viewBox="0 0 30 28" style="position: absolute; left: -4px; top: -9px" aria-hidden="true"><path d="M4 15c3 2 5 5 7 8 4-8 10-16 17-21" fill="none" stroke="#1D1D1B" stroke-width="2.4" stroke-linecap="round"></path></svg></span><span style="color: #8A8984; text-decoration: line-through; text-decoration-color: #1D1D1B">Order new pen tips<small style="text-decoration: none">Ticked on the tablet</small></span></div>
+<div class="r" style="border-bottom: 0"><span class="b" style="border-color: #A9A7A0"></span><span style="color: #3B3A37">Waiting on 2 people<small>Alex, Priya</small></span></div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid #CFCDC6; font-size: 12px; color: #5E5D58">
+<span>Synced 2 min ago</span>
+<a href="Main.dc.html" style="font-weight: 500">Open Jotted</a>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":380,"height":560}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "events"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "cursor": 0,
+      "events": []
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "settings",
+    "set",
+    "mcp_add_mode",
+    "propose_all"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "watch": [],
+      "action_threshold": 0.7,
+      "poll_interval_s": 120,
+      "include_others": true,
+      "todo_enabled": false,
+      "todo_name": "To-do",
+      "todo_folder": "/",
+      "from_now": [],
+      "mcp_add_mode": "propose_all",
+      "proposed_limit": 200
+    }
+  }
+}

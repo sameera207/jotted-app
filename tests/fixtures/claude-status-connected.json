@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "claude",
+    "status"
+  ],
+  "exit": 0,
+  "envelope": {
+    "v": 1,
+    "ok": true,
+    "data": {
+      "configured": true,
+      "config_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json",
+      "command": "/Applications/Jotted.app/Contents/Resources/jotted/jotted",
+      "command_exists": true,
+      "matches_current": true,
+      "admin": false,
+      "installed": true,
+      "env": {
+        "JOTTED_CONFIG": "/Users/you/Library/Application Support/jotted/config.toml",
+        "JOTTED_HOME": "/Users/you/Library/Application Support/jotted/home",
+        "JOTTED_BUNDLED": "1"
+      }
+    }
+  }
+}

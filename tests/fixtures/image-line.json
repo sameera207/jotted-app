@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "image",
+    "line",
+    "0000",
+    "1:1"
+  ],
+  "exit": 1,
+  "envelope": {
+    "v": 1,
+    "ok": false,
+    "error": {
+      "code": "not_found",
+      "message": "no line 1:1 in 0000"
+    }
+  }
+}
