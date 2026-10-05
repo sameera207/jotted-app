@@ -54,13 +54,16 @@ To bump the CLI:
 
 ## 3. Where it goes in the app
 
-Tauri's `externalBin` (its "sidecar") takes a single file, so the onedir folder goes in as a
-**resource** instead, built per target:
+Tauri's `externalBin` (its "sidecar") takes a single file, and Tauri's `resources` copy
+follows symlinks: the frozen Python's `_internal/Python -> Python.framework/…` becomes a loose
+copy whose code signature no longer checks out, and the CLI can't start ("code signature
+invalid"). So Tauri builds the app alone, and `scripts/build-mac.sh TARGET` puts the onedir
+folder in afterwards with `ditto` (which keeps symlinks), signs the app around it, and makes
+the DMG:
 
 ```sh
-T=aarch64-apple-darwin
-npx tauri build --target $T \
-  --config "{\"bundle\":{\"resources\":{\"binaries/jotted-$T/\":\"jotted/\"}}}"
+APPLE_SIGNING_IDENTITY="Developer ID Application: …" NOTARY_PROFILE=jotted-notary \
+  scripts/build-mac.sh aarch64-apple-darwin
 ```
 
 That puts it at `Jotted.app/Contents/Resources/jotted/jotted`. In release builds,

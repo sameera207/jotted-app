@@ -31,7 +31,12 @@ export JOTTED_CONFIG="$tmp/config.toml"
 
 # Temp paths, and the dev checkout's jotted, become the paths a person would see: the app's
 # bundled jotted, Claude's settings, an older copy of the app in Downloads.
-current="$cli_src/.venv/bin/jotted"
+# The jotted `claude connect` names by default: the dev checkout's, or a release build's own.
+if [[ -n "${JOTTED_BIN:-}" && "$(basename "$bin")" == "jotted" ]]; then
+  current="$(cd "$(dirname "$bin")" && pwd -P)/jotted"
+else
+  current="$cli_src/.venv/bin/jotted"
+fi
 SCRUB="$(node -e 'console.log(JSON.stringify(process.argv.slice(1)))' -- \
   "$current" "/Applications/Jotted.app/Contents/Resources/jotted/jotted" \
   "$tmp/Claude" "/Users/you/Library/Application Support/Claude" \

@@ -11,7 +11,7 @@
       "contract": 1,
       "contract_min": 1,
       "source_plugin": "remarkable",
-      "python": "3.11.15",
+      "python": "3.11.9",
       "bundled": true
     }
   }

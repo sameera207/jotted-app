@@ -662,7 +662,7 @@ export interface Data {
   };
   /** run the web app, background checking and the CLI's fast path */
   "serve": unknown;
-  /** set up anything missing, then open the app (start here) */
+  /** set up anything missing, then run Jotted in this window (start here) */
   "start": unknown;
   /** update Jotted to the latest version on GitHub */
   "update": {

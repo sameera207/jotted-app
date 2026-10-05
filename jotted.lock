@@ -6,12 +6,11 @@
   "targets": {
     "aarch64-apple-darwin": {
       "asset": "jotted-0.1.0-macos-arm64.tar.gz",
-      "sha256": null
+      "sha256": "717c3e8fe276ce069a7d9dec2c01dfacde572798c6849bd544bf77ca332e811f"
     },
     "x86_64-apple-darwin": {
       "asset": "jotted-0.1.0-macos-x64.tar.gz",
-      "sha256": null
+      "sha256": "b3aa18994218a31c04fd460a7cdd326fc48d4d9406ea4fee7c349529483d224e"
     }
-  },
-  "vendored_from": "jotted-cli main@5a02e5d (unreleased; reports 0.1.0). Replace with the next tagged release before packaging."
+  }
 }
