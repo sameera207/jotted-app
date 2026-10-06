@@ -149,3 +149,55 @@ export function applyStep(settings: Settings, step: WatchStep, library: Library 
     }
   }
 }
+
+// ---------------------------------------------------------------- changes
+//
+// A tick, an untick or a mode change as the `watch` commands it runs, the commands that undo
+// it, and what the toast says (spec: Actions and commands).
+
+export type WatchChange = { steps: WatchStep[]; undo: WatchStep[]; message: string };
+
+/** A folder's name in a sentence ("/" is everything). */
+export function shortName(path: string): string {
+  return nameOf(path) || "Everything";
+}
+
+/** Tick: the folder takes over entries under it, and starts as From now on. */
+export function tickChange(path: string, settings: Settings, library: Library): WatchChange {
+  const taken = entriesUnder(path, settings.watch);
+  const hasDocs = documentsUnder(path, library).length > 0;
+  return {
+    steps: [{ action: "add", path }, ...taken.map((c): WatchStep => ({ action: "remove", path: c })), ...(hasDocs ? [{ action: "from-now", path } as const] : [])],
+    undo: [
+      { action: "remove", path },
+      ...(hasDocs ? [{ action: "read-all", path } as const] : []),
+      ...taken.flatMap((c): WatchStep[] => [
+        { action: "add", path: c },
+        ...(folderMode(c, library, settings.from_now) === "from-now" ? [{ action: "from-now", path: c } as const] : []),
+      ]),
+    ],
+    message: taken.length
+      ? `Reading ${shortName(path)}, which now covers ${taken.map(shortName).join(", ")}`
+      : `Reading ${shortName(path)} from now on`,
+  };
+}
+
+/** Untick (or × on a chip): its documents aren't skipped if it's read again later. */
+export function untickChange(path: string, settings: Settings, library: Library): WatchChange {
+  const hasDocs = documentsUnder(path, library).length > 0;
+  const fromNow = folderMode(path, library, settings.from_now) === "from-now";
+  return {
+    steps: [{ action: "remove", path }, ...(hasDocs ? [{ action: "read-all", path } as const] : [])],
+    undo: [{ action: "add", path }, ...(fromNow ? [{ action: "from-now", path } as const] : [])],
+    message: `Stopped reading ${shortName(path)}`,
+  };
+}
+
+export function modeChange(path: string, mode: "from-now" | "everything"): WatchChange {
+  const [on, off] = mode === "from-now" ? (["from-now", "read-all"] as const) : (["read-all", "from-now"] as const);
+  return {
+    steps: [{ action: on, path }],
+    undo: [{ action: off, path }],
+    message: mode === "from-now" ? `${shortName(path)}: only new writing` : `${shortName(path)}: older pages count too`,
+  };
+}
