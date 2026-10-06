@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Banner } from "./components/Banner";
 import { PillButton } from "./components/PillButton";
+import { Toast } from "./components/Toast";
 import { transport } from "./jotted/transport";
 import { onNavigate, setDockIcon, setKeepRunning, setTrayCount, setTrayState } from "./platform";
 import { readPrefs } from "./store/prefs";
@@ -134,6 +135,7 @@ function Main() {
               }}
             />
           )}
+          <Toast />
         </main>
       </div>
       {panel !== null && <ErrorPanel message={panel} />}

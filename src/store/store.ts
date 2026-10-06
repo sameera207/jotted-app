@@ -23,6 +23,9 @@ export type Phase =
 
 export type Banner = { id: string; message: string; action: "reconnect" | "check-key" | null };
 
+/** A short note after a change, with Undo when it can be undone (spec: Notebooks › Toasts). */
+export type Toast = { id: number; message: string; undo: (() => void) | null };
+
 export type ClaudeStatus = Data["claude status"];
 /** What the last Claude Desktop action said, shown where it was taken. */
 export type ClaudeNote = {
@@ -50,6 +53,8 @@ export type State = {
   printingFresh: boolean;
   serve: ServeState | null;
   banners: Banner[];
+  /** One at a time; a new one replaces it. */
+  toast: Toast | null;
   /** An error by the row (or "new" for the add row) where the action was taken. */
   rowErrors: Record<string, string>;
   panel: string | null;
@@ -84,6 +89,7 @@ export const initialState: State = {
   printingFresh: false,
   serve: null,
   banners: [],
+  toast: null,
   rowErrors: {},
   panel: null,
   claude: null,
@@ -116,6 +122,17 @@ export function dismissBanner(id: string) {
 
 export function closePanel() {
   set({ panel: null });
+}
+
+let toastId = 0;
+
+export function showToast(message: string, undo: (() => void) | null = null) {
+  set({ toast: { id: ++toastId, message, undo } });
+}
+
+/** Close the toast; with an id, only if it's still that one. */
+export function dismissToast(id?: number) {
+  set((s) => (id === undefined || s.toast?.id === id ? { toast: null } : {}));
 }
 
 /** Show a message in a banner with no action. */

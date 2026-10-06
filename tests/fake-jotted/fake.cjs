@@ -51,7 +51,8 @@ function initialState() {
   status.last_collected_at = new Date(Date.now() - 2 * 60_000).toISOString();
   status.watch = seed.watch;
   status.todo = { ...status.todo, enabled: true, published_at: status.last_collected_at };
-  const settings = { ...data("settings"), watch: seed.watch, from_now: seed.watch.slice(0, 1), todo_enabled: true };
+  const from_now = seed.from_now.flatMap((path) => documentsAt(seed.library, path).map((d) => d.id)).sort();
+  const settings = { ...data("settings"), watch: seed.watch, from_now, todo_enabled: true };
   const ai = data("ai");
   ai.llm.key = { set: true, source: "saved", hint: "sk-ant-…3f2a" };
   return { items, settings, status, ai, library: seed.library, steps: allSteps(true), events: [], cursor: 0, failures: {}, claude: claudeState("not-configured") };
@@ -217,11 +218,16 @@ function changeItem(s, id, change) {
   return ok(item);
 }
 
+/** As the CLI matches paths: a folder covers everything under it, "/" covers all. */
+const under = (path, w) => w === "/" || path === w || path.startsWith(`${w}/`);
+const documentsAt = (library, path) => library.documents.filter((d) => under(d.path, path));
+
 function libraryData(s) {
-  const watched = (path) => s.settings.watch.some((w) => path === w || path.startsWith(`${w}/`));
-  const documents = s.library.documents.map((d) => ({ ...d, watched: watched(d.folder) }));
+  const watched = (path) => s.settings.watch.some((w) => under(path, w));
+  const documents = s.library.documents.map((d) => ({ ...d, watched: watched(d.path) }));
+  // As the CLI counts: every document under the folder, subfolders included.
   const folders = s.library.folders.map((f) => ({
-    path: f.path, watched: watched(f.path), documents: documents.filter((d) => d.folder === f.path).length,
+    path: f.path, watched: watched(f.path), documents: documents.filter((d) => under(d.folder, f.path)).length,
   }));
   return { folders, documents };
 }
@@ -464,20 +470,26 @@ function run(args, stdin) {
       return ok(libraryData(s));
     case "watch": {
       const [action, path] = [words[1], words.slice(2).join(" ")];
-      const known = s.library.folders.some((f) => f.path === path);
+      const known = path === "/" || s.library.folders.some((f) => f.path === path) || s.library.documents.some((d) => d.path === path);
       if (!known) return fail("not_found", `no folder ${path}`);
       const st = s.settings;
-      if (action === "add" && !st.watch.includes(path)) st.watch.push(path); // as recorded: from_now unchanged
-      if (action === "remove") { st.watch = st.watch.filter((p) => p !== path); st.from_now = st.from_now.filter((p) => p !== path); }
-      if (action === "from-now" && !st.from_now.includes(path)) st.from_now.push(path);
-      if (action === "read-all") st.from_now = st.from_now.filter((p) => p !== path);
+      // As the CLI does: add and remove change `watch` only; from-now and read-all change the
+      // IDs of the documents under PATH today in `from_now`.
+      const docs = documentsAt(s.library, path);
+      if ((action === "from-now" || action === "read-all") && docs.length === 0) return fail("not_found", `no documents at ${path}`);
+      const ids = new Set(docs.map((d) => d.id));
+      if (action === "add" && !st.watch.includes(path)) st.watch.push(path);
+      if (action === "remove") st.watch = st.watch.filter((p) => p !== path);
+      if (action === "from-now") st.from_now = [...new Set([...st.from_now, ...ids])].sort();
+      if (action === "read-all") st.from_now = st.from_now.filter((id) => !ids.has(id));
       s.status.watch = st.watch;
       if (st.watch.length) s.steps.folders = true;
       addEvent(s, "settings.changed", { settings: st });
       save(s);
       if (action === "add" || action === "remove") return ok(st);
-      const docs = s.library.documents.filter((d) => d.folder === path).map((d) => d.path);
-      return ok({ settings: st, documents: docs, already_read: [] });
+      // Read in full already, with no page count kept from an earlier from-now: nothing to skip.
+      const late = action === "from-now" ? docs.filter((d) => d.read && !d.own && d.baseline_pages === 0).map((d) => d.path) : [];
+      return ok({ settings: st, documents: docs.map((d) => d.path), already_read: late });
     }
     default:
       return fail("usage", `the fake jotted doesn't know \`${args.join(" ")}\``);

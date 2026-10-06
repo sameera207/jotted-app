@@ -4,7 +4,8 @@
 import * as jotted from "../jotted/client";
 import { JottedError } from "../jotted/errors";
 import type { Settings } from "../jotted/types.gen";
-import { showError, useStore } from "./store";
+import { applyStep, coverOf, folderState, modeChange, shortName, tickChange, untickChange, type WatchChange, type WatchStep } from "./folders";
+import { dismissToast, showError, showToast, useStore } from "./store";
 
 const set = useStore.setState;
 const get = useStore.getState;
@@ -86,17 +87,84 @@ export async function loadLibrary(): Promise<boolean> {
   }
 }
 
+/** Run `watch` commands in order, showing their result at once. Keeps the last settings the CLI
+ *  answers, then reloads `library` and `status`. On an error it puts `settings` back and runs no
+ *  more; if some had run, it reloads `settings` to show the truth. Returns the documents
+ *  `watch from-now` found already read in full, or null when a command failed. */
+export async function changeWatch(steps: WatchStep[]): Promise<string[] | null> {
+  const before = get().settings;
+  if (before) set({ settings: steps.reduce((s, step) => applyStep(s, step, get().library), before) });
+  let answered: Settings | null = null;
+  const alreadyRead: string[] = [];
+  try {
+    for (const step of steps) {
+      const result = await jotted.watch(step.action, step.path);
+      if ("settings" in result) {
+        answered = result.settings;
+        alreadyRead.push(...result.already_read);
+      } else answered = result;
+    }
+    if (answered) set({ settings: answered });
+    return alreadyRead;
+  } catch (e) {
+    if (before) set({ settings: before });
+    if (answered) void reloadSettings();
+    showError(e);
+    return null;
+  } finally {
+    void loadLibrary();
+    void reloadStatus();
+  }
+}
+
+/** A change, then a toast whose Undo runs the reverse commands. */
+async function changeWithUndo(change: WatchChange): Promise<string[] | null> {
+  const result = await changeWatch(change.steps);
+  if (result) {
+    showToast(change.message, () => {
+      dismissToast();
+      void changeWatch(change.undo);
+    });
+  }
+  return result;
+}
+
+/** Tick or untick a folder's box. A folder read through its parent can't change on its own. */
+export async function toggleFolder(path: string): Promise<string[] | null> {
+  const { settings, library } = get();
+  if (!settings || !library) return null;
+  const state = folderState(path, settings.watch);
+  if (state === "inherited") {
+    const cover = shortName(coverOf(path, settings.watch) ?? "/");
+    showToast(`Read through ${cover}. Untick it to choose these one by one.`);
+    return null;
+  }
+  return changeWithUndo(state === "on" ? untickChange(path, settings, library) : tickChange(path, settings, library));
+}
+
+/** × on a chip: stop reading this entry (a folder or a document). */
+export async function stopReading(path: string) {
+  const { settings, library } = get();
+  if (settings && library) await changeWithUndo(untickChange(path, settings, library));
+}
+
+export function setFolderMode(path: string, mode: "from-now" | "everything"): Promise<string[] | null> {
+  return changeWithUndo(modeChange(path, mode));
+}
+
+async function reloadSettings() {
+  try {
+    set({ settings: await jotted.settings() });
+  } catch {
+    // the error that led here is already shown
+  }
+}
+
 /** Read a folder (or stop), and From now on / Everything. Keeps the settings it answers. */
 export async function watchFolder(action: jotted.WatchAction, path: string) {
   const before = get().settings;
   // Show the change at once: the folder's tick and its From now on / Everything.
-  if (before) {
-    const watch = action === "add" ? [...new Set([...before.watch, path])] : action === "remove" ? before.watch.filter((p) => p !== path) : before.watch;
-    // `watch add` leaves from_now alone (the CLI reads the folder's earlier pages too).
-    const from_now =
-      action === "from-now" ? [...new Set([...before.from_now, path])] : action === "add" ? before.from_now : before.from_now.filter((p) => p !== path);
-    set({ settings: { ...before, watch, from_now } });
-  }
+  if (before) set({ settings: applyStep(before, { action, path }, get().library) });
   try {
     const result = await jotted.watch(action, path);
     set({ settings: "settings" in result ? result.settings : result });

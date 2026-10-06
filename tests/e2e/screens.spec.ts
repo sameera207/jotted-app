@@ -47,7 +47,14 @@ test.describe("first run", () => {
     await expect(step("The Jev plugin")).toHaveClass(/setup-step-on/);
     await page.getByRole("button", { name: "Skip this" }).click();
 
-    await page.getByRole("checkbox", { name: "Read Work" }).click();
+    const tree = page.getByRole("tree", { name: "Folders" });
+    await expect(page.getByRole("button", { name: "Continue" })).toBeDisabled();
+    await expect(page.getByRole("searchbox", { name: "Find a folder" })).toHaveCount(0); // compact
+    await tree.getByRole("checkbox", { name: "Read Work", exact: true }).click();
+    await expect(page.locator(".toast")).toContainText("Reading Work from now on");
+    await page.getByRole("button", { name: "Expand Work" }).click();
+    await expect(tree.getByRole("checkbox", { name: "Hiring, read through Work" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Continue" })).toBeEnabled();
     await page.getByRole("button", { name: "Continue" }).click();
     await expect(row(page, "Book the retro room")).toBeVisible();
   });
@@ -133,25 +140,139 @@ test.describe("settings", () => {
 });
 
 test.describe("notebooks", () => {
+  const treeRow = (page: Page, name: string) => page.getByRole("treeitem", { name: new RegExp(`^${name}\\b`) });
+  const box = (page: Page, name: string) => page.getByRole("checkbox", { name: `Read ${name}`, exact: true });
+  const chip = (page: Page, label: string) => page.locator(".chip", { has: page.getByRole("button", { name: `Stop reading ${label}`, exact: true }) });
+
   test.beforeEach(async ({ page }) => {
     await open(page);
     await page.getByRole("button", { name: "Notebooks" }).click();
+    await expect(page.getByRole("tree", { name: "Folders" })).toBeVisible();
   });
 
-  test("shows folders, reads a new one, and from when", async ({ page }) => {
-    const journal = page.locator(".folder", { hasText: "Journal" });
-    await expect(journal).not.toHaveClass(/folder-on/);
-    await journal.getByRole("checkbox", { name: "Read Journal" }).click();
-    await expect(journal).toHaveClass(/folder-on/);
-    await expect(journal.getByRole("radio", { name: "Everything" })).toHaveAttribute("aria-checked", "true");
-    await journal.getByRole("radio", { name: "From now on" }).click();
-    await expect(journal.getByRole("radio", { name: "From now on" })).toHaveAttribute("aria-checked", "true");
-    await expect(page.locator(".watching")).toContainText("Journal");
+  test("ticks a folder: a chip, from now on, and the sidebar's Watching", async ({ page }) => {
+    await expect(chip(page, "Books & PDFs")).toHaveCount(0);
+    await box(page, "Books & PDFs").click();
+    await expect(box(page, "Books & PDFs")).toHaveAttribute("aria-checked", "true");
+    await expect(chip(page, "Books & PDFs")).toBeVisible();
+    await expect(treeRow(page, "Books & PDFs")).toContainText("from now on");
+    await expect(page.locator(".watching")).toContainText("Books & PDFs");
+    await expect(page.locator(".toast")).toContainText("Reading Books & PDFs from now on");
   });
 
-  test("shows a folder's documents, blank when Jotted hasn't read them", async ({ page }) => {
-    await page.getByRole("button", { name: "Meeting Notes", exact: true }).click();
-    await expect(page.getByRole("heading", { name: "Meeting Notes" })).toBeVisible();
+  test("ticks a parent: its subfolders are read through it, and their own chips go", async ({ page }) => {
+    await expect(box(page, "Journal")).toHaveAttribute("aria-checked", "mixed");
+    await expect(chip(page, "Journal › Travel")).toBeVisible();
+    await box(page, "Journal").click();
+    await expect(page.locator(".toast")).toContainText("Reading Journal, which now covers Travel");
+    await expect(chip(page, "Journal")).toContainText("+1 inside");
+    await expect(chip(page, "Journal › Travel")).toHaveCount(0);
+    const travel = page.getByRole("checkbox", { name: "Travel, read through Journal" });
+    await expect(travel).toHaveAttribute("aria-disabled", "true");
+    await expect(treeRow(page, "Travel")).toContainText("via Journal");
+    await travel.click({ force: true }); // aria-disabled: still clickable, to say why
+    await expect(page.locator(".toast")).toContainText("Read through Journal. Untick it to choose these one by one.");
+    await expect(page.locator(".toast").getByRole("button", { name: "Undo" })).toHaveCount(0);
+    await expect(travel).toHaveAttribute("aria-checked", "true");
+  });
+
+  test("Undo puts the previous ticks back", async ({ page }) => {
+    await box(page, "Journal").click();
+    await expect(chip(page, "Journal")).toBeVisible();
+    await page.locator(".toast").getByRole("button", { name: "Undo" }).click();
+    await expect(chip(page, "Journal")).toHaveCount(0);
+    await expect(chip(page, "Journal › Travel")).toBeVisible();
+    await expect(box(page, "Travel")).toHaveAttribute("aria-checked", "true");
+    await expect(box(page, "Journal")).toHaveAttribute("aria-checked", "mixed");
+
+    await chip(page, "Home").getByRole("button", { name: "Stop reading Home" }).click();
+    await expect(chip(page, "Home")).toHaveCount(0);
+    await expect(page.locator(".toast")).toContainText("Stopped reading Home");
+    await page.locator(".toast").getByRole("button", { name: "Undo" }).click();
+    await expect(chip(page, "Home")).toBeVisible();
+  });
+
+  test("From now on and Everything stick", async ({ page }) => {
+    await treeRow(page, "Work").click();
+    const modes = page.getByRole("radiogroup", { name: "Which pages of Work" });
+    await expect(modes.getByRole("radio", { name: /Everything/ })).toHaveAttribute("aria-checked", "true");
+    await modes.getByRole("radio", { name: /From now on/ }).click();
+    await expect(page.locator(".toast")).toContainText("Work: only new writing");
+    await expect(modes.getByRole("radio", { name: /From now on/ })).toHaveAttribute("aria-checked", "true");
+    // Work's documents read in full already: nothing to skip there.
+    await expect(page.locator(".detail")).toContainText("Already read in full, so nothing is skipped: 1:1 Priya, 1-1 Adam.");
+
+    await page.reload();
+    await page.getByRole("button", { name: "Notebooks" }).click();
+    await treeRow(page, "Work").click();
+    await expect(treeRow(page, "Work")).toContainText("from now on");
+    await expect(modes.getByRole("radio", { name: /From now on/ })).toHaveAttribute("aria-checked", "true");
+    await modes.getByRole("radio", { name: /Everything/ }).click();
+    await expect(page.locator(".toast")).toContainText("Work: older pages count too");
+    await page.reload();
+    await page.getByRole("button", { name: "Notebooks" }).click();
+    await expect(treeRow(page, "Work")).toContainText("everything");
+  });
+
+  test("search finds a nested folder and opens its parent; Being read hides unticked folders", async ({ page }) => {
+    await expect(treeRow(page, "Hiring")).toHaveCount(0); // Work is closed
+    await page.getByRole("searchbox", { name: "Find a folder" }).fill("hir");
+    await expect(treeRow(page, "Hiring")).toBeVisible();
+    await expect(treeRow(page, "Hiring").locator("mark")).toHaveText("Hir");
+    await expect(treeRow(page, "Work")).toHaveAttribute("aria-expanded", "true");
+    await expect(treeRow(page, "Home")).toHaveCount(0);
+    await page.getByRole("searchbox", { name: "Find a folder" }).fill("xyz");
+    await expect(page.getByText("No folder called “xyz”.")).toBeVisible();
+    await page.getByRole("searchbox", { name: "Find a folder" }).press("Escape");
+    await expect(treeRow(page, "Home")).toBeVisible();
+
+    await page.getByRole("button", { name: "Being read" }).click();
+    await expect(treeRow(page, "Books & PDFs")).toHaveCount(0);
+    await expect(treeRow(page, "Journal")).toBeVisible(); // partial: Travel inside is read
+    await expect(treeRow(page, "Travel")).toBeVisible();
+  });
+
+  test("keyboard: arrows move and select, Space ticks, ← goes to the parent", async ({ page }) => {
+    await box(page, "Home").click(); // untick it, to tick it again from the keyboard
+    await expect(box(page, "Home")).toHaveAttribute("aria-checked", "false");
+    await page.getByRole("searchbox", { name: "Find a folder" }).focus();
+    await page.keyboard.press("ArrowDown"); // the first folder
+    await page.keyboard.press("ArrowDown");
+    await expect(treeRow(page, "Home")).toBeFocused();
+    await expect(treeRow(page, "Home")).toHaveAttribute("aria-selected", "true");
+    await page.keyboard.press("Space");
+    await expect(box(page, "Home")).toHaveAttribute("aria-checked", "true");
+
+    await treeRow(page, "Work").click();
+    await page.keyboard.press("ArrowRight"); // open
+    await expect(treeRow(page, "Work")).toHaveAttribute("aria-expanded", "true");
+    await page.keyboard.press("ArrowRight"); // first child
+    await expect(treeRow(page, "1-1")).toBeFocused();
+    await expect(page.getByRole("heading", { name: "1-1", level: 2 })).toBeVisible();
+    await page.keyboard.press("ArrowLeft");
+    await expect(treeRow(page, "Work")).toBeFocused();
+    await page.keyboard.press("ArrowLeft"); // close
+    await expect(treeRow(page, "Work")).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test("the detail panel: breadcrumbs, Go to, subfolders and documents", async ({ page }) => {
+    await page.getByRole("button", { name: "Expand Work" }).click();
+    await treeRow(page, "Hiring").click();
+    const detail = page.locator(".detail");
+    await expect(detail).toContainText("Read because Work is ticked. To choose this folder on its own, untick Work.");
+    await expect(detail).toContainText("Documents in this folder · 1");
+    await expect(page.locator(".thumb", { hasText: "Interview loop" })).toContainText("not read yet");
+    await detail.getByRole("button", { name: "Go to Work" }).click();
+    await expect(page.getByRole("heading", { name: "Work", level: 2 })).toBeVisible();
+    await expect(detail).toContainText("Jotted reads Work and the 2 folders inside it: 3 documents.");
+    await expect(detail).toContainText("Documents in this folder · 1"); // not its subfolders
+    await detail.locator(".subfolder", { hasText: "1-1" }).click();
+    await expect(page.getByRole("heading", { name: "1-1", level: 2 })).toBeVisible();
+    await detail.getByRole("button", { name: "Work", exact: true }).click(); // the breadcrumb
+    await expect(page.getByRole("heading", { name: "Work", level: 2 })).toBeVisible();
+
+    await treeRow(page, "Meeting Notes").click();
+    await expect(detail).toContainText("Documents in this folder · 3");
     const thumbs = page.locator(".thumb");
     await expect(thumbs.filter({ hasText: "Weekly sync" }).locator("img")).toBeVisible();
     await expect(thumbs.filter({ hasText: "Planning offsite" }).locator(".page-blank")).toBeVisible();
