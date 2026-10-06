@@ -158,7 +158,7 @@ Driven by `setup status`, never a hard-coded list: the steps, their order, "step
 | `remarkable.connect` | One-time code (8 characters), Connect, "Get a code" (my.remarkable.com) | `connect --stdin`; on `conflict`, offer "Replace the connection" → `connect --stdin --replace` |
 | `llm` | Provider cards from `ai.llm.providers`; key field labelled for the provider, "Get a key" from `ai.llm.key_url`; Model field (default `ai.llm.model`, free text, "needs to read images") | `ai provider NAME`, `ai model NAME`, `ai key llm --stdin` (checks the key with the provider) |
 | `jev` (optional) | Plugin card: Jev, from TypeSafe, with its key field; "Skip plugins" | `ai key jev --stdin` |
-| `folders` | A compact Notebooks picker: tick folders, "From now on" or "Everything" | `library`, `watch add PATH`, `watch from-now PATH` |
+| `folders` | The Notebooks folder tree, compact: tick folders (a new tick reads from now on) | `library`, `watch add PATH`, `watch from-now PATH` |
 
 When `complete` is true, start the server and follower, run `check` once, and open the To-do window.
 
@@ -198,9 +198,7 @@ Opened from a row's source line: the To-do sheet on the left with the row select
 
 ![Notebooks](../docs/mockups/03-notebooks.png)
 
-- `library`: folder cards (`folders`), each with "Read this folder" (`watch add` / `watch remove`) and, when read, "From now on" / "Everything" (`watch from-now` / `watch read-all`, shown from `settings.from_now`).
-- Selecting a folder shows its documents (`documents` where `folder` matches) as thumbnails, from `image page DOC 1`, fetched lazily and cached in memory for the session. Only pages Jotted has read can be drawn (`not_found` otherwise), so unread documents show a blank sheet with their name.
-- The To-do document is marked "made by Jotted · not read" (its folder and name match `status.todo`).
+Built to `Notebooks-folder-picker-spec.md`, which replaced the folder cards: "Reading" chips, a folder tree (search, Being read, keyboard) and the selected folder's detail, with From now on / Everything and its documents as thumbnails. Setup's `folders` step uses the same tree, compact.
 
 ### 6. Settings
 
