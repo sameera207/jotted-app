@@ -11,7 +11,7 @@
     "data": {
       "changed": true,
       "config_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json",
-      "backup_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json.bak-20261006T013334Z",
+      "backup_path": "/Users/you/Library/Application Support/Claude/claude_desktop_config.json.bak-20261006T112230Z",
       "restart_required": true,
       "entry": {
         "command": "/Applications/Jotted.app/Contents/Resources/jotted/jotted",

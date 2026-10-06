@@ -1,16 +1,16 @@
 {
   "comment": "The jotted CLI release bundled in the app. Bump with scripts/fetch-jotted.ts; see docs/bundling.md.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "contract": 1,
   "repo": "sameera207/jotted-cli",
   "targets": {
     "aarch64-apple-darwin": {
-      "asset": "jotted-0.1.1-macos-arm64.tar.gz",
-      "sha256": "ca4b07cdc1c4bc941a533fe5c8d9f058d8ea6ed458680e4d30a8fc9d0f3f53ff"
+      "asset": "jotted-0.1.2-macos-arm64.tar.gz",
+      "sha256": "7e84979d22eb366ee3627b89051096235154aae1cbbbc0e27e234183e664fa79"
     },
     "x86_64-apple-darwin": {
-      "asset": "jotted-0.1.1-macos-x64.tar.gz",
-      "sha256": "9837b49392f903f9e6585bca6789198e247ba19113efc9e844a003d46ed14da6"
+      "asset": "jotted-0.1.2-macos-x64.tar.gz",
+      "sha256": "6404905ac505a6f34c0ab1bf1e2f8c37f45245c8650a22ad76ab72d0d634e486"
     }
   }
 }
