@@ -24,6 +24,8 @@ export function Setup() {
   const [preparing, setPreparing] = useState(!reconnect);
   const [problem, setProblem] = useState<string | null>(null);
   const [skipped, setSkipped] = useState<Set<string>>(new Set());
+  // `setup prepare` finished setup on its own: this computer already had jotted set up.
+  const [already, setAlready] = useState(false);
 
   const refresh = async () => {
     try {
@@ -45,6 +47,7 @@ export function Setup() {
     try {
       const prepared = await jotted.setupPrepare();
       setStatus({ complete: prepared.complete, steps: prepared.steps });
+      setAlready(prepared.complete && !prepared.steps.some((s) => !s.done));
       await reloadAi();
     } catch (e) {
       setProblem(e instanceof Error ? e.message : String(e));
@@ -113,6 +116,14 @@ export function Setup() {
           </li>
         ))}
       </ol>
+      {already && !current && (
+        <div className="setup-foot">
+          <p className="setup-note">Everything was already set up on this computer, by jotted: the steps above say what it found.</p>
+          <PillButton primary onClick={() => void finishSetup()}>
+            Open Jotted
+          </PillButton>
+        </div>
+      )}
       {optionalLeft && current && (
         <div className="setup-foot">
           <PillButton

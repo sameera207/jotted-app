@@ -9,6 +9,7 @@
 //   jotted __fake reset                    start again from the fixtures
 //   jotted __fake fail "items done" busy 2 the next 2 runs of that command fail with that code
 //   jotted __fake setup incomplete|complete  incomplete: only the app folder is done
+//   jotted __fake setup tools-missing      all done but rmapi (an existing jotted folder)
 //   jotted __fake connected false          the reMarkable connection dropped
 //   jotted __fake event TYPE JSON          append an event, e.g. source.error '{"message":"…"}'
 //   jotted __fake claude STATE             Claude Desktop's entry: not-installed, not-configured,
@@ -488,8 +489,9 @@ function control(args) {
   const s = load();
   if (what === "fail") s.failures[rest[0]] = { code: rest[1], times: Number(rest[2] || 1) };
   if (what === "setup") {
-    s.steps = allSteps(rest[0] === "complete");
-    if (rest[0] !== "complete") {
+    s.steps = allSteps(rest[0] !== "incomplete");
+    if (rest[0] === "tools-missing") s.steps["remarkable.rmapi"] = false;
+    if (rest[0] === "incomplete") {
       Object.assign(s.status.source, { connected: false, detail: "not connected" });
       Object.assign(s.settings, { watch: [], from_now: [] });
       s.ai.llm.key = { set: false, source: null, hint: null };

@@ -63,6 +63,21 @@ test.describe("first run", () => {
   });
 });
 
+test.describe("first run on a computer already set up with jotted", () => {
+  test("no welcome, prepare finishes setup, the steps say what was found", async ({ page }) => {
+    await fake(page, "reset");
+    await fake(page, "setup", "tools-missing");
+    await page.goto("/");
+
+    await expect(page.getByRole("heading", { name: "Set up Jotted" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Your handwriting, as a to-do list" })).toHaveCount(0);
+    await expect(page.locator(".setup-step", { hasText: "rmapi" })).toContainText("done");
+    await expect(page.getByText("Everything was already set up on this computer")).toBeVisible();
+    await page.getByRole("button", { name: "Open Jotted" }).click();
+    await expect(row(page, "Book the retro room")).toBeVisible();
+  });
+});
+
 test.describe("settings", () => {
   test.beforeEach(async ({ page }) => {
     await open(page);

@@ -1,7 +1,9 @@
 // Start-up (spec: Architecture › Start-up).
 //
 // 1. `version`: stop with "needs updating" unless its contract is one this app supports.
-// 2. `setup status`: incomplete → Setup.
+// 2. `setup status`: incomplete → Setup (after the Welcome screen, the first time, unless the
+//    person has nothing left to give: an existing jotted folder missing only what
+//    `setup prepare` does on its own).
 // 3. Read the latest event cursor, then load the store (items, proposals, settings, ai, status).
 // 4. Start the server and the events follower from that cursor, so nothing that changed
 //    while loading is missed. (A cursor saved across launches would add nothing: the list
@@ -10,6 +12,7 @@
 
 import * as jotted from "../jotted/client";
 import { JottedError } from "../jotted/errors";
+import type { SetupStep } from "../jotted/types.gen";
 import { parseEvent } from "../jotted/events";
 import { transport } from "../jotted/transport";
 import { startCliUpdates } from "./cliUpdate";
@@ -44,7 +47,7 @@ export async function startup(): Promise<void> {
     const setup = await jotted.setupStatus();
     if (!setup.complete) {
       // The Welcome screen once, on first launch; after that straight to Setup.
-      if (!readPrefs().welcomed) {
+      if (!readPrefs().welcomed && setup.steps.some(needsPerson)) {
         set({ phase: { kind: "welcome" } });
         return;
       }
@@ -73,6 +76,11 @@ export async function startup(): Promise<void> {
     }
     set({ phase: { kind: "failed", message: e instanceof Error ? e.message : String(e) } });
   }
+}
+
+/** A step only the person can do: `setup prepare` does the rest without asking. */
+export function needsPerson(step: SetupStep): boolean {
+  return !step.done && !step.optional && step.command !== "setup prepare";
 }
 
 /** Welcome → Setup. */
