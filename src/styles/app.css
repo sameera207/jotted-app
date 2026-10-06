@@ -245,6 +245,10 @@
   color: var(--faint);
 }
 
+.filters-end {
+  margin-left: auto;
+}
+
 /* ------------------------------------------------------------ rows */
 
 .rows {

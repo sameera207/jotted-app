@@ -197,7 +197,7 @@ function positional(args) {
   const out = [];
   for (let i = 0; i < args.length; i++) {
     if (args[i].startsWith("--")) {
-      if (!["--follow", "--stdin", "--replace", "--no-browser", "--force", "--dry-run", "--propose", "--agent", "--admin", "--all"].includes(args[i])) i++;
+      if (!["--follow", "--stdin", "--replace", "--no-browser", "--force", "--dry-run", "--propose", "--agent", "--admin", "--all", "--fresh"].includes(args[i])) i++;
     } else out.push(args[i]);
   }
   return out;
@@ -426,6 +426,21 @@ function run(args, stdin) {
       // A successful check has no required fields (schema.json); the recorder can only record
       // one before setup (check-before-setup.json), since it never connects a tablet.
       return ok({});
+    }
+    case "todo": {
+      // As the CLI's sync_todo: off → {enabled: false}; nothing on paper to read in the fake.
+      if (!s.settings.todo_enabled) return ok({ enabled: false });
+      if (!s.status.source.connected) return fail("not_connected", "Couldn't reach the reMarkable cloud. Reconnect.");
+      // --fresh prints the document again with open items only. Done items stay done.
+      const fresh = args.includes("--fresh");
+      const entries = s.items.filter((i) => i.status === "open" && (s.settings.include_others || i.owner !== "someone_else"));
+      const published = fresh || args.includes("--force");
+      if (published) {
+        s.status.todo.published_at = new Date().toISOString();
+        addEvent(s, "todo.published", { items: entries.length });
+      }
+      save(s);
+      return ok({ ticked: 0, written: 0, published, items: entries.length, overflow: 0, rebuilt: fresh });
     }
     case "image line":
       return ok({ svg: svgLine(`${words[2]}${words[3]}`) });

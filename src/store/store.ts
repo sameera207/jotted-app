@@ -46,6 +46,8 @@ export type State = {
   /** The device's folders and documents (`library`), loaded when Notebooks opens. */
   library: Library | null;
   sync: "idle" | "checking";
+  /** "Clear done" is printing a fresh To-do document. */
+  printingFresh: boolean;
   serve: ServeState | null;
   banners: Banner[];
   /** An error by the row (or "new" for the add row) where the action was taken. */
@@ -79,6 +81,7 @@ export const initialState: State = {
   status: null,
   library: null,
   sync: "idle",
+  printingFresh: false,
   serve: null,
   banners: [],
   rowErrors: {},
@@ -300,6 +303,28 @@ export async function checkNow() {
   } catch (e) {
     set({ sync: "idle" });
     showError(e);
+  }
+}
+
+/** "Clear done": read the paper, then reprint the To-do document with open items only. */
+export async function printFresh(): Promise<boolean> {
+  if (get().printingFresh) return false;
+  set({ printingFresh: true });
+  try {
+    const result = await jotted.todoFresh();
+    if (result.enabled === false) {
+      notify(result.unsupported ? "This reMarkable has no To-do document to print." : "The To-do document is off. Turn it on in Settings.");
+      return false;
+    }
+    const n = result.items ?? Object.values(get().items).filter((i) => i.status === "open").length;
+    const overflow = result.overflow ? `; ${result.overflow} didn't fit` : "";
+    notify(`Printed a fresh list with ${n} open item${n === 1 ? "" : "s"}${overflow}`);
+    return true;
+  } catch (e) {
+    showError(e);
+    return false;
+  } finally {
+    set({ printingFresh: false });
   }
 }
 
