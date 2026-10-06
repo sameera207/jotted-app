@@ -3,17 +3,19 @@
 // Known step ids get their own screen; any other gets a generic one. Keys and one-time codes
 // go on stdin and are cleared from the page as soon as they're sent.
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { FolderTree } from "../components/FolderTree";
 import { PillButton } from "../components/PillButton";
 import { SecretField } from "../components/SecretField";
+import { Toast } from "../components/Toast";
 import * as jotted from "../jotted/client";
 import { JottedError } from "../jotted/errors";
 import type { SetupStatus, SetupStep } from "../jotted/types.gen";
 import { openLink } from "../platform";
-import { chooseModel, loadLibrary, reloadAi, saveKey } from "../store/settings";
+import { buildTree } from "../store/folders";
+import { chooseModel, loadLibrary, reloadAi, saveKey, toggleFolder } from "../store/settings";
 import { finishSetup } from "../store/startup";
 import { reloadStatus, useStore } from "../store/store";
-import { FolderPicker } from "./Notebooks";
 
 const GET_A_CODE = "https://my.remarkable.com/device/desktop/connect";
 
@@ -323,6 +325,7 @@ function JevStep({ onDone }: { onDone: () => void }) {
 function FoldersStep({ onDone }: { onDone: () => void }) {
   const library = useStore((s) => s.library);
   const settings = useStore((s) => s.settings);
+  const tree = useMemo(() => (library ? buildTree(library.folders) : []), [library]);
   useEffect(() => {
     void loadLibrary();
     if (!useStore.getState().settings) void jotted.settings().then((s) => useStore.setState({ settings: s }), () => {});
@@ -330,13 +333,16 @@ function FoldersStep({ onDone }: { onDone: () => void }) {
   if (!library || !settings) return <p className="setup-note">Loading your notebooks…</p>;
   return (
     <div className="step-screen">
-      <p className="setup-detail">Tick what Jotted should read. You can change these any time in Notebooks.</p>
-      <FolderPicker library={library} folders={library.folders} settings={settings} compact />
+      <p className="setup-detail">
+        Tick a folder and Jotted reads it, along with every folder inside it, from now on. You can change these any time in Notebooks.
+      </p>
+      <FolderTree compact tree={tree} library={library} settings={settings} onToggle={(path) => void toggleFolder(path)} />
       <div className="setting-editor-actions">
         <PillButton primary disabled={settings.watch.length === 0} onClick={onDone}>
           Continue
         </PillButton>
       </div>
+      <Toast />
     </div>
   );
 }
