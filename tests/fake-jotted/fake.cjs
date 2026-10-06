@@ -422,7 +422,9 @@ function run(args, stdin) {
       s2.status.last_collected_at = new Date().toISOString();
       addEvent(s2, "check.finished", { new: 0, updated: 0, missing: 0, pages_read: 0, errors: 0 });
       save(s2);
-      return ok(data("check"));
+      // A successful check has no required fields (schema.json); the recorder can only record
+      // one before setup (check-before-setup.json), since it never connects a tablet.
+      return ok({});
     }
     case "image line":
       return ok({ svg: svgLine(`${words[2]}${words[3]}`) });

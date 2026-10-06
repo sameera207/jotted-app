@@ -52,14 +52,12 @@ fn resolve_dev_path(bin: &str) -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("..").join(path)
 }
 
-/// macOS's certificate bundle. The frozen Python in a jotted release doesn't find any CA
-/// certificates on its own, so its HTTPS downloads (rmapi in `setup prepare`) fail with
-/// CERTIFICATE_VERIFY_FAILED unless it's pointed here.
-const SYSTEM_CERTS: &str = "/etc/ssl/cert.pem";
-
 /// A `jotted` command with the environment every run gets: `JOTTED_BUNDLED=1` (it never
-/// updates itself; the app ships a new pin instead), no Python settings from the shell, and
-/// the system's CA certificates unless `SSL_CERT_FILE` is already set.
+/// updates itself; the app ships a new pin instead) and no Python settings from the shell.
+///
+/// No `SSL_CERT_FILE`: since jotted 0.1.1 its HTTPS uses the system's trust store (the macOS
+/// keychain), and that variable would take priority over it, losing the certificates a work
+/// proxy installs there (jotted-cli specs/Standalone-TLS-spec.md).
 pub fn command(path: &Path, args: &[String]) -> Command {
     let mut cmd = Command::new(path);
     cmd.args(args)
@@ -68,9 +66,6 @@ pub fn command(path: &Path, args: &[String]) -> Command {
         .env_remove("PYTHONPATH")
         .env_remove("VIRTUAL_ENV")
         .kill_on_drop(true);
-    if std::env::var_os("SSL_CERT_FILE").is_none() && Path::new(SYSTEM_CERTS).exists() {
-        cmd.env("SSL_CERT_FILE", SYSTEM_CERTS);
-    }
     if !cfg!(debug_assertions) {
         // An app opened from the Finder doesn't get the shell's PATH; don't depend on it.
         cmd.env("PATH", "/usr/bin:/bin:/usr/sbin:/sbin");
@@ -95,13 +90,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn every_run_gets_the_system_certificates() {
+    fn leaves_certificates_to_the_system_trust_store() {
         let cmd = command(Path::new("/bin/echo"), &[]);
         let envs: Vec<_> = cmd.as_std().get_envs().collect();
-        let get = |k: &str| envs.iter().find(|(n, _)| *n == k).and_then(|(_, v)| *v).map(|v| v.to_owned());
-        assert_eq!(get("JOTTED_BUNDLED").as_deref(), Some(std::ffi::OsStr::new("1")));
-        if std::env::var_os("SSL_CERT_FILE").is_none() && Path::new(SYSTEM_CERTS).exists() {
-            assert_eq!(get("SSL_CERT_FILE").as_deref(), Some(std::ffi::OsStr::new(SYSTEM_CERTS)));
-        }
+        let get = |k: &str| envs.iter().find(|(n, _)| *n == k).map(|(_, v)| *v);
+        assert_eq!(get("JOTTED_BUNDLED"), Some(Some(std::ffi::OsStr::new("1"))));
+        // Setting it would override the keychain, and a work proxy's certificate with it.
+        assert_eq!(get("SSL_CERT_FILE"), None);
+        assert_eq!(get("SSL_CERT_DIR"), None);
     }
 }

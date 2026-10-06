@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "check"
+  ],
+  "exit": 3,
+  "envelope": {
+    "v": 1,
+    "ok": false,
+    "error": {
+      "code": "not_set_up",
+      "message": "rmapi, to reach the reMarkable cloud: not set up yet. Run `jotted setup prepare`",
+      "step": "remarkable.rmapi"
+    }
+  }
+}

@@ -105,7 +105,7 @@ rec events events --since 0
 rec error-not-found items done 999
 rec error-invalid settings set poll_interval_s nope
 rec library library
-rec check check
+rec check-before-setup check   # not_set_up since 0.1.1: the recorder never connects a tablet
 rec image-line image line 0000 1:1
 
 # Claude Desktop, in each state (specs/Claude-Desktop-spec.md, Status and repair).
