@@ -48,6 +48,8 @@ export function Setup() {
       await reloadAi();
     } catch (e) {
       setProblem(e instanceof Error ? e.message : String(e));
+      // Still show the steps, so it's clear which one failed.
+      await jotted.setupStatus().then(setStatus, () => {});
     } finally {
       setPreparing(false);
     }
