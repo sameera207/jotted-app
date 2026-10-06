@@ -47,7 +47,7 @@ test.describe("first run", () => {
     await expect(step("The Jev plugin")).toHaveClass(/setup-step-on/);
     await page.getByRole("button", { name: "Skip this" }).click();
 
-    await page.getByRole("checkbox", { name: "Read Work" }).click();
+    await page.getByRole("checkbox", { name: "Read Work", exact: true }).click();
     await page.getByRole("button", { name: "Continue" }).click();
     await expect(row(page, "Book the retro room")).toBeVisible();
   });
@@ -139,9 +139,9 @@ test.describe("notebooks", () => {
   });
 
   test("shows folders, reads a new one, and from when", async ({ page }) => {
-    const journal = page.locator(".folder", { hasText: "Journal" });
+    const journal = page.locator(".folder").filter({ has: page.getByRole("button", { name: "Journal", exact: true }) });
     await expect(journal).not.toHaveClass(/folder-on/);
-    await journal.getByRole("checkbox", { name: "Read Journal" }).click();
+    await journal.getByRole("checkbox", { name: "Read Journal", exact: true }).click();
     await expect(journal).toHaveClass(/folder-on/);
     await expect(journal.getByRole("radio", { name: "Everything" })).toHaveAttribute("aria-checked", "true");
     await journal.getByRole("radio", { name: "From now on" }).click();

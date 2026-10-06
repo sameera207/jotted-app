@@ -331,7 +331,7 @@ function FoldersStep({ onDone }: { onDone: () => void }) {
   return (
     <div className="step-screen">
       <p className="setup-detail">Tick what Jotted should read. You can change these any time in Notebooks.</p>
-      <FolderPicker folders={library.folders} settings={settings} compact />
+      <FolderPicker library={library} folders={library.folders} settings={settings} compact />
       <div className="setting-editor-actions">
         <PillButton primary disabled={settings.watch.length === 0} onClick={onDone}>
           Continue

@@ -4,6 +4,7 @@
 import * as jotted from "../jotted/client";
 import { JottedError } from "../jotted/errors";
 import type { Settings } from "../jotted/types.gen";
+import { applyStep } from "./folders";
 import { showError, useStore } from "./store";
 
 const set = useStore.setState;
@@ -90,13 +91,7 @@ export async function loadLibrary(): Promise<boolean> {
 export async function watchFolder(action: jotted.WatchAction, path: string) {
   const before = get().settings;
   // Show the change at once: the folder's tick and its From now on / Everything.
-  if (before) {
-    const watch = action === "add" ? [...new Set([...before.watch, path])] : action === "remove" ? before.watch.filter((p) => p !== path) : before.watch;
-    // `watch add` leaves from_now alone (the CLI reads the folder's earlier pages too).
-    const from_now =
-      action === "from-now" ? [...new Set([...before.from_now, path])] : action === "add" ? before.from_now : before.from_now.filter((p) => p !== path);
-    set({ settings: { ...before, watch, from_now } });
-  }
+  if (before) set({ settings: applyStep(before, { action, path }, get().library) });
   try {
     const result = await jotted.watch(action, path);
     set({ settings: "settings" in result ? result.settings : result });

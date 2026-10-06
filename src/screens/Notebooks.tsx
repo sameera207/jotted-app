@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Checkbox } from "../components/Checkbox";
 import { PageImage } from "../components/PageImage";
 import type { Library, Settings, Status } from "../jotted/types.gen";
+import { folderMode } from "../store/folders";
 import { folderLabel } from "../store/labels";
 import { loadLibrary, watchFolder } from "../store/settings";
 import { useStore } from "../store/store";
@@ -28,7 +29,7 @@ export function Notebooks() {
       </header>
       {!library && <p className="empty">{failed ? "Couldn't load your notebooks." : "Loading your notebooks…"}</p>}
       {library && settings && (
-        <FolderPicker folders={folders} settings={settings} selected={shown} onSelect={setSelected} />
+        <FolderPicker library={library} folders={folders} settings={settings} selected={shown} onSelect={setSelected} />
       )}
       {library && shown && <Documents library={library} folder={shown} status={status} />}
     </div>
@@ -36,6 +37,7 @@ export function Notebooks() {
 }
 
 type PickerProps = {
+  library: Library;
   folders: Library["folders"];
   settings: Settings;
   selected?: string | null;
@@ -44,12 +46,13 @@ type PickerProps = {
 };
 
 /** Folder cards: "Read this folder", then From now on / Everything. Also Setup's picker. */
-export function FolderPicker({ folders, settings, selected, onSelect, compact }: PickerProps) {
+export function FolderPicker({ library, folders, settings, selected, onSelect, compact }: PickerProps) {
   return (
     <ul className={`folders ${compact ? "folders-compact" : ""}`} aria-label="Folders">
       {folders.map((f) => {
         const watched = settings.watch.includes(f.path);
-        const fromNow = settings.from_now.includes(f.path);
+        // `from_now` holds document IDs, not folder paths.
+        const fromNow = folderMode(f.path, library, settings.from_now) === "from-now";
         const name = folderLabel(f.path) || "Top level";
         return (
           <li key={f.path} className={`folder ${watched ? "folder-on" : ""} ${selected === f.path ? "folder-selected" : ""}`}>
