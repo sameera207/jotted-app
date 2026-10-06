@@ -56,6 +56,8 @@ export const settingsSet = (key: string, value: string) => run<Data["settings se
 export const ai = () => run<Data["ai"]>(["ai"]);
 export const status = () => run<Data["status"]>(["status"]);
 export const check = () => run<Data["check"]>(["check"]);
+/** Read the paper, then print the To-do document again with open items only. Done items stay done. */
+export const todoFresh = () => run<Data["todo"]>(["todo", "--fresh"]);
 
 export const claudeStatus = () => run<Data["claude status"]>(["claude", "status"]);
 /** `command`: the bundled jotted Claude should run; omitted, the CLI uses its own path. */

@@ -3,14 +3,16 @@
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { ClaudePrompts } from "../components/Claude";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 import { FilterTabs } from "../components/FilterTabs";
+import { PillButton } from "../components/PillButton";
 import { Proposals } from "../components/Proposals";
 import { canPeek, SourcePeek } from "../components/SourcePeek";
 import { Row } from "../components/Row";
 import { Sheet } from "../components/Sheet";
 import type { Item } from "../jotted/types.gen";
 import { paginate, passes, sortItems, type OwnerFilter, type StatusFilter } from "../store/labels";
-import { add, clearRowError, dismiss, edit, reopen, tick, useStore } from "../store/store";
+import { add, clearRowError, dismiss, edit, printFresh, reopen, tick, useStore } from "../store/store";
 
 const STATUS_TABS: { value: StatusFilter; label: string }[] = [
   { value: "open", label: "Open" },
@@ -30,6 +32,8 @@ export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElemen
   const status = useStore((s) => s.status);
   const settings = useStore((s) => s.settings);
   const rowErrors = useStore((s) => s.rowErrors);
+  const printingFresh = useStore((s) => s.printingFresh);
+  const [confirmFresh, setConfirmFresh] = useState(false);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("open");
   const [ownerFilter, setOwnerFilter] = useState<OwnerFilter>("everyone");
   const [page, setPage] = useState(0);
@@ -52,6 +56,7 @@ export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElemen
   const current = Math.min(page, pages.length - 1);
   const rows = pages[current];
   const openCount = Object.values(items).filter((i) => i.status === "open").length;
+  const doneCount = Object.values(items).filter((i) => i.status === "done").length;
 
   useEffect(() => setPage((p) => Math.min(p, pages.length - 1)), [pages.length]);
 
@@ -103,6 +108,16 @@ export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElemen
           <FilterTabs label="Status" options={STATUS_TABS} value={statusFilter} onChange={(v) => (setStatusFilter(v), setPage(0))} />
           <span className="filters-dot" aria-hidden="true">·</span>
           <FilterTabs label="Whose" options={OWNER_TABS} value={ownerFilter} onChange={(v) => (setOwnerFilter(v), setPage(0))} />
+          {paged && (
+            <PillButton
+              className="filters-end"
+              disabled={doneCount === 0 || printingFresh}
+              title="Print the To-do document again with open items only"
+              onClick={() => setConfirmFresh(true)}
+            >
+              {printingFresh ? "Printing…" : "Clear done"}
+            </PillButton>
+          )}
         </div>
         <ul className="rows" aria-label="To-do items">
           {rows.map((item, index) => (
@@ -158,6 +173,20 @@ export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElemen
         </nav>
       )}
       </div>
+      {confirmFresh && (
+        <ConfirmDialog
+          title="Print a fresh list?"
+          confirm="Print fresh list"
+          onCancel={() => setConfirmFresh(false)}
+          onConfirm={() => {
+            setConfirmFresh(false);
+            void printFresh();
+          }}
+        >
+          Your reMarkable gets a new To-do list with only the {openCount} open item{openCount === 1 ? "" : "s"}. Ticks and
+          handwriting on the current list are read first, then it's replaced.
+        </ConfirmDialog>
+      )}
       {peek !== null && (
         <SourcePeek
           id={peek}

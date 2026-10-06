@@ -111,3 +111,76 @@ test("works from the keyboard", async ({ page }) => {
   await page.keyboard.press("Space"); // ticks "Confirm the offsite venue"
   await expect(row(page, "Confirm the offsite venue")).toHaveCount(0);
 });
+
+test.describe("Clear done", () => {
+  /** Every command the page runs, as its args. */
+  const commands = (page: Page) => {
+    const seen: string[][] = [];
+    page.on("request", (r) => r.url().endsWith("/__jotted/run") && seen.push(r.postDataJSON().args));
+    return seen;
+  };
+  const freshRuns = (seen: string[][]) => seen.filter((a) => a[0] === "todo");
+
+  test.beforeEach(async ({ page }) => {
+    // Start with nothing done: the seed's two done items reopened.
+    await jotted(page, "items", "reopen", "8");
+    await jotted(page, "items", "reopen", "9");
+    await expect(page.locator(".nav-on .nav-count")).toHaveText("9");
+  });
+
+  test("is disabled until something is done", async ({ page }) => {
+    const button = page.getByRole("button", { name: "Clear done" });
+    await expect(button).toBeDisabled();
+    await page.getByRole("checkbox", { name: "Done: Draft the Q4 hiring plan" }).click();
+    await expect(button).toBeEnabled();
+  });
+
+  test("prints a fresh list after confirming", async ({ page }) => {
+    const seen = commands(page);
+    await page.getByRole("checkbox", { name: "Done: Draft the Q4 hiring plan" }).click();
+    await page.getByRole("button", { name: "Clear done" }).click();
+    const dialog = page.getByRole("dialog", { name: "Print a fresh list?" });
+    await expect(dialog).toContainText("only the 8 open items");
+    await expect(dialog.getByRole("button", { name: "Cancel" })).toBeFocused();
+    await dialog.getByRole("button", { name: "Print fresh list" }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(page.locator(".banner")).toContainText("Printed a fresh list with 8 open items");
+    expect(freshRuns(seen)).toEqual([["todo", "--fresh"]]);
+    // Done items stay done.
+    await page.getByRole("radio", { name: "Done" }).click();
+    await expect(row(page, "Draft the Q4 hiring plan")).toBeVisible();
+  });
+
+  test("Cancel and Escape run nothing", async ({ page }) => {
+    const seen = commands(page);
+    await page.getByRole("checkbox", { name: "Done: Draft the Q4 hiring plan" }).click();
+    const button = page.getByRole("button", { name: "Clear done" });
+    await button.click();
+    await page.getByRole("dialog").getByRole("button", { name: "Cancel" }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(button).toBeFocused();
+    await button.click();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Print fresh list" })).toBeFocused();
+    await page.keyboard.press("Tab"); // focus stays in the dialog
+    await expect(page.getByRole("dialog").getByRole("button", { name: "Cancel" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    expect(freshRuns(seen)).toEqual([]);
+  });
+
+  test("shows Reconnect when the cloud can't be reached", async ({ page }) => {
+    await fake(page, "fail", "todo", "not_connected", "1");
+    await page.getByRole("checkbox", { name: "Done: Draft the Q4 hiring plan" }).click();
+    await page.getByRole("button", { name: "Clear done" }).click();
+    await page.getByRole("button", { name: "Print fresh list" }).click();
+    const banner = page.locator(".banner");
+    await expect(banner).toContainText("Couldn't reach the reMarkable cloud");
+    await expect(banner.getByRole("button", { name: "Reconnect" })).toBeVisible();
+  });
+
+  test("isn't there when the To-do document is off", async ({ page }) => {
+    await jotted(page, "settings", "set", "todo_enabled", "false");
+    await expect(page.getByRole("button", { name: "Clear done" })).toHaveCount(0);
+  });
+});

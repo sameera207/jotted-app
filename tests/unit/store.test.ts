@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { parseEvent } from "../../src/jotted/events";
 import type { Item } from "../../src/jotted/types.gen";
-import { add, byId, dismiss, edit, initialState, reduce, tick, useStore } from "../../src/store/store";
+import { add, byId, dismiss, edit, initialState, printFresh, reduce, tick, useStore } from "../../src/store/store";
 import { data, fakeTransport, fixture } from "./helpers";
 
 const recorded = () => data<{ cursor: number; events: any[] }>("events").events;
@@ -87,5 +87,54 @@ describe("optimistic changes", () => {
     expect(useStore.getState().banners).toEqual([
       { id: "reconnect:Couldn't reach the cloud", message: "Couldn't reach the cloud", action: "reconnect" },
     ]);
+  });
+});
+
+describe("Clear done", () => {
+  it("prints a fresh list and says how many open items are on it", async () => {
+    useStore.setState({ items: byId([item({ id: 1 }), item({ id: 2, status: "done" })]) });
+    const calls = fakeTransport(() => ({ v: 1, ok: true, data: { ticked: 0, written: 0, published: true, items: 1, overflow: 0, rebuilt: true } }));
+    const pending = printFresh();
+    expect(useStore.getState().printingFresh).toBe(true);
+    expect(await pending).toBe(true);
+    expect(calls.map((c) => c.args)).toEqual([["todo", "--fresh"]]);
+    expect(useStore.getState().printingFresh).toBe(false);
+    expect(useStore.getState().banners.map((b) => b.message)).toEqual(["Printed a fresh list with 1 open item"]);
+    expect(useStore.getState().items[2].status).toBe("done"); // done items stay done
+  });
+
+  it("says when items didn't fit", async () => {
+    fakeTransport(() => ({ v: 1, ok: true, data: { published: true, items: 40, overflow: 3, rebuilt: true } }));
+    await printFresh();
+    expect(useStore.getState().banners.map((b) => b.message)).toEqual(["Printed a fresh list with 40 open items; 3 didn't fit"]);
+  });
+
+  it("runs once at a time", async () => {
+    const calls = fakeTransport(() => ({ v: 1, ok: true, data: { published: true, items: 0 } }));
+    const first = printFresh();
+    expect(await printFresh()).toBe(false);
+    await first;
+    expect(calls.length).toBe(1);
+  });
+
+  it("says so when the To-do document is off", async () => {
+    fakeTransport(() => ({ v: 1, ok: true, data: { enabled: false } }));
+    expect(await printFresh()).toBe(false);
+    expect(useStore.getState().banners.map((b) => b.message)).toEqual(["The To-do document is off. Turn it on in Settings."]);
+  });
+
+  it("sends not_connected to a banner with Reconnect", async () => {
+    fakeTransport(() => ({ v: 1, ok: false, error: { code: "not_connected", message: "Couldn't reach the cloud" } }));
+    expect(await printFresh()).toBe(false);
+    expect(useStore.getState().banners).toEqual([
+      { id: "reconnect:Couldn't reach the cloud", message: "Couldn't reach the cloud", action: "reconnect" },
+    ]);
+    expect(useStore.getState().printingFresh).toBe(false);
+  });
+
+  it("shows invalid in a banner", async () => {
+    fakeTransport(() => ({ v: 1, ok: false, error: { code: "invalid", message: "The To-do document is off" } }));
+    await printFresh();
+    expect(useStore.getState().banners.map((b) => b.message)).toEqual(["The To-do document is off"]);
   });
 });

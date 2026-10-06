@@ -1,6 +1,6 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & { icon?: ReactNode; primary?: boolean };
+type Props = ComponentProps<"button"> & { icon?: ReactNode; primary?: boolean };
 
 export function PillButton({ icon, primary, children, className, ...rest }: Props) {
   return (
