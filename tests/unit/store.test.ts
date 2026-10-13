@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { parseEvent } from "../../src/jotted/events";
 import type { Item } from "../../src/jotted/types.gen";
-import { add, byId, dismiss, edit, initialState, printFresh, reduce, tick, useStore } from "../../src/store/store";
+import { add, applyEvent, byId, dismiss, dismissBanner, edit, initialState, notify, printFresh, reduce, tick, useStore } from "../../src/store/store";
 import { data, fakeTransport, fixture } from "./helpers";
 
 const recorded = () => data<{ cursor: number; events: any[] }>("events").events;
@@ -35,6 +35,64 @@ describe("events update the store", () => {
 
   it("ignores event types it doesn't know", () => {
     expect(parseEvent({ v: 1, cursor: 9, at: "", type: "plugin.sparkles" })).toBeNull();
+  });
+});
+
+describe("sync problems", () => {
+  const at = "2026-10-11T11:09:04Z";
+  const started = { type: "check.started", cursor: 1, at } as const;
+  const finished = (errors: number) => ({ type: "check.finished", cursor: 2, at, new: 0, updated: 0, missing: 0, pages_read: 0, errors }) as const;
+  const failed = (message: string) => ({ type: "source.error", cursor: 1, at, message }) as const;
+  const messages = () => useStore.getState().banners.map((b) => b.message);
+
+  beforeEach(() => {
+    fakeTransport(() => ({ v: 1, ok: true, data: data("status") }));
+  });
+
+  it("keep one banner across failed checks, with the latest problem", async () => {
+    for (const time of ["11:09:04", "12:09:05"]) {
+      await applyEvent(started);
+      await applyEvent(failed(`/Quick sheets: rmapi -ni get failed (exit 1): ERROR: 2026/10/11 ${time} connection reset by peer`));
+      await applyEvent(failed(`rmapi timed out after 120s at ${time}`));
+      await applyEvent(finished(2));
+    }
+    expect(messages()).toEqual(["The last check had 2 problems: rmapi timed out after 120s at 12:09:05"]);
+  });
+
+  it("cuts a long message to one short line", async () => {
+    await applyEvent(started);
+    await applyEvent(failed(`${"x".repeat(300)}\nmore`));
+    expect(messages()[0]).toHaveLength(160);
+    expect(messages()[0].endsWith("…")).toBe(true);
+    await applyEvent(finished(1));
+    expect(messages()[0]).toMatch(/^The last check had 1 problem: x+…$/);
+  });
+
+  it("says how many when no source.error came with them", async () => {
+    await applyEvent(started);
+    await applyEvent(finished(3));
+    expect(messages()).toEqual(["The last check had 3 problems."]);
+  });
+
+  it("clears on a clean check and leaves other banners alone", async () => {
+    notify("Quit and reopen Claude Desktop to use the new version of Jotted there.");
+    await applyEvent(started);
+    await applyEvent(failed("The tablet went away"));
+    await applyEvent(finished(1));
+    expect(messages()).toHaveLength(2);
+    await applyEvent(started);
+    await applyEvent(finished(0));
+    expect(messages()).toEqual(["Quit and reopen Claude Desktop to use the new version of Jotted there."]);
+  });
+
+  it("can be dismissed, and comes back with the next failed check", async () => {
+    await applyEvent(failed("The tablet went away"));
+    dismissBanner(useStore.getState().banners[0].id);
+    expect(messages()).toEqual([]);
+    await applyEvent(started);
+    await applyEvent(failed("Still away"));
+    await applyEvent(finished(1));
+    expect(messages()).toEqual(["The last check had 1 problem: Still away"]);
   });
 });
 
