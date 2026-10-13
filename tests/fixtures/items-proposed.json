@@ -25,7 +25,7 @@
           "name": "Platform sync, 29 Sep",
           "folder": "",
           "page": 0,
-          "anchor": "c40dd79947a14f41b3a90470a377e932",
+          "anchor": "1dda8e266cd94d93a09d07a3dd0b341e",
           "kind": "doc",
           "key": "platform-sync-29-sep-l14",
           "title": "Platform sync, 29 Sep",
@@ -35,7 +35,7 @@
         "page": null,
         "edited": false,
         "slot": null,
-        "created_at": "2026-10-06T21:49:21.520003+00:00"
+        "created_at": "2026-10-13T09:10:51.396257+00:00"
       },
       {
         "id": 5,
@@ -53,7 +53,7 @@
           "name": "Re: Q4 budget",
           "folder": "",
           "page": 0,
-          "anchor": "9e7fb2b34c644aa8ac3bc23184796ea6",
+          "anchor": "e9914aca60544ac68cba5a43949d220a",
           "kind": "mail",
           "key": "msg-8812",
           "title": "Re: Q4 budget",
@@ -63,7 +63,7 @@
         "page": null,
         "edited": false,
         "slot": null,
-        "created_at": "2026-10-06T21:49:21.815274+00:00"
+        "created_at": "2026-10-13T09:10:51.719445+00:00"
       },
       {
         "id": 6,
@@ -81,7 +81,7 @@
           "name": "Team offsite",
           "folder": "",
           "page": 0,
-          "anchor": "99b1698c9eb043a6b8115959615886bc",
+          "anchor": "f168961e4c6c416692ba38d658a0b848",
           "kind": "calendar",
           "key": "evt-offsite-2026",
           "title": "Team offsite",
@@ -91,7 +91,7 @@
         "page": null,
         "edited": false,
         "slot": null,
-        "created_at": "2026-10-06T21:49:22.111360+00:00"
+        "created_at": "2026-10-13T09:10:52.044110+00:00"
       }
     ]
   }

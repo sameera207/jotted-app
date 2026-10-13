@@ -13,7 +13,7 @@
       "events": [
         {
           "cursor": 1,
-          "at": "2026-10-06T21:49:19Z",
+          "at": "2026-10-13T09:10:49Z",
           "type": "item.added",
           "item": {
             "id": 1,
@@ -31,7 +31,7 @@
               "name": "",
               "folder": "",
               "page": 0,
-              "anchor": "630fe4fe487646868d082deb64f1d00b",
+              "anchor": "380bc315c6004414b1fe8062606e9495",
               "kind": null,
               "key": null,
               "title": null,
@@ -41,12 +41,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:19.454008+00:00"
+            "created_at": "2026-10-13T09:10:49.137786+00:00"
           }
         },
         {
           "cursor": 2,
-          "at": "2026-10-06T21:49:19Z",
+          "at": "2026-10-13T09:10:49Z",
           "type": "item.added",
           "item": {
             "id": 2,
@@ -64,7 +64,7 @@
               "name": "",
               "folder": "",
               "page": 0,
-              "anchor": "44969462d44b4c5dbb61f25f203424e2",
+              "anchor": "5f959b7a4aec478390abbc3c6a87e276",
               "kind": null,
               "key": null,
               "title": null,
@@ -74,12 +74,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:19.751931+00:00"
+            "created_at": "2026-10-13T09:10:49.459233+00:00"
           }
         },
         {
           "cursor": 3,
-          "at": "2026-10-06T21:49:20Z",
+          "at": "2026-10-13T09:10:49Z",
           "type": "item.added",
           "item": {
             "id": 3,
@@ -97,7 +97,7 @@
               "name": "",
               "folder": "",
               "page": 0,
-              "anchor": "aa295ae1e91240d6b16e9794bb33c250",
+              "anchor": "872aa0435da84c67b450ce30075dcf69",
               "kind": null,
               "key": null,
               "title": null,
@@ -107,12 +107,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:20.048071+00:00"
+            "created_at": "2026-10-13T09:10:49.780998+00:00"
           }
         },
         {
           "cursor": 4,
-          "at": "2026-10-06T21:49:20Z",
+          "at": "2026-10-13T09:10:50Z",
           "type": "item.changed",
           "item": {
             "id": 2,
@@ -130,7 +130,7 @@
               "name": "",
               "folder": "",
               "page": 0,
-              "anchor": "44969462d44b4c5dbb61f25f203424e2",
+              "anchor": "5f959b7a4aec478390abbc3c6a87e276",
               "kind": null,
               "key": null,
               "title": null,
@@ -140,12 +140,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:19.751931+00:00"
+            "created_at": "2026-10-13T09:10:49.459233+00:00"
           }
         },
         {
           "cursor": 5,
-          "at": "2026-10-06T21:49:20Z",
+          "at": "2026-10-13T09:10:50Z",
           "type": "item.changed",
           "item": {
             "id": 2,
@@ -163,7 +163,7 @@
               "name": "",
               "folder": "",
               "page": 0,
-              "anchor": "44969462d44b4c5dbb61f25f203424e2",
+              "anchor": "5f959b7a4aec478390abbc3c6a87e276",
               "kind": null,
               "key": null,
               "title": null,
@@ -173,12 +173,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:19.751931+00:00"
+            "created_at": "2026-10-13T09:10:49.459233+00:00"
           }
         },
         {
           "cursor": 6,
-          "at": "2026-10-06T21:49:20Z",
+          "at": "2026-10-13T09:10:50Z",
           "type": "item.changed",
           "item": {
             "id": 3,
@@ -196,7 +196,7 @@
               "name": "",
               "folder": "",
               "page": 0,
-              "anchor": "aa295ae1e91240d6b16e9794bb33c250",
+              "anchor": "872aa0435da84c67b450ce30075dcf69",
               "kind": null,
               "key": null,
               "title": null,
@@ -206,12 +206,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:20.048071+00:00"
+            "created_at": "2026-10-13T09:10:49.780998+00:00"
           }
         },
         {
           "cursor": 7,
-          "at": "2026-10-06T21:49:21Z",
+          "at": "2026-10-13T09:10:51Z",
           "type": "item.removed",
           "item": {
             "id": 3
@@ -219,7 +219,7 @@
         },
         {
           "cursor": 8,
-          "at": "2026-10-06T21:49:21Z",
+          "at": "2026-10-13T09:10:51Z",
           "type": "item.proposed",
           "item": {
             "id": 4,
@@ -237,7 +237,7 @@
               "name": "Platform sync, 29 Sep",
               "folder": "",
               "page": 0,
-              "anchor": "c40dd79947a14f41b3a90470a377e932",
+              "anchor": "1dda8e266cd94d93a09d07a3dd0b341e",
               "kind": "doc",
               "key": "platform-sync-29-sep-l14",
               "title": "Platform sync, 29 Sep",
@@ -247,12 +247,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:21.520003+00:00"
+            "created_at": "2026-10-13T09:10:51.396257+00:00"
           }
         },
         {
           "cursor": 9,
-          "at": "2026-10-06T21:49:21Z",
+          "at": "2026-10-13T09:10:51Z",
           "type": "item.proposed",
           "item": {
             "id": 5,
@@ -270,7 +270,7 @@
               "name": "Re: Q4 budget",
               "folder": "",
               "page": 0,
-              "anchor": "9e7fb2b34c644aa8ac3bc23184796ea6",
+              "anchor": "e9914aca60544ac68cba5a43949d220a",
               "kind": "mail",
               "key": "msg-8812",
               "title": "Re: Q4 budget",
@@ -280,12 +280,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:21.815274+00:00"
+            "created_at": "2026-10-13T09:10:51.719445+00:00"
           }
         },
         {
           "cursor": 10,
-          "at": "2026-10-06T21:49:22Z",
+          "at": "2026-10-13T09:10:52Z",
           "type": "item.proposed",
           "item": {
             "id": 6,
@@ -303,7 +303,7 @@
               "name": "Team offsite",
               "folder": "",
               "page": 0,
-              "anchor": "99b1698c9eb043a6b8115959615886bc",
+              "anchor": "f168961e4c6c416692ba38d658a0b848",
               "kind": "calendar",
               "key": "evt-offsite-2026",
               "title": "Team offsite",
@@ -313,12 +313,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:22.111360+00:00"
+            "created_at": "2026-10-13T09:10:52.044110+00:00"
           }
         },
         {
           "cursor": 11,
-          "at": "2026-10-06T21:49:22Z",
+          "at": "2026-10-13T09:10:52Z",
           "type": "item.added",
           "item": {
             "id": 7,
@@ -336,7 +336,7 @@
               "name": "",
               "folder": "",
               "page": 0,
-              "anchor": "434e075dbdf74cc386ae173d61342009",
+              "anchor": "b3b35ec236ef4015851edebed5cc6868",
               "kind": null,
               "key": null,
               "title": null,
@@ -346,12 +346,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:22.698512+00:00"
+            "created_at": "2026-10-13T09:10:52.695664+00:00"
           }
         },
         {
           "cursor": 12,
-          "at": "2026-10-06T21:49:23Z",
+          "at": "2026-10-13T09:10:53Z",
           "type": "item.accepted",
           "item": {
             "id": 4,
@@ -369,7 +369,7 @@
               "name": "Platform sync, 29 Sep",
               "folder": "",
               "page": 0,
-              "anchor": "c40dd79947a14f41b3a90470a377e932",
+              "anchor": "1dda8e266cd94d93a09d07a3dd0b341e",
               "kind": "doc",
               "key": "platform-sync-29-sep-l14",
               "title": "Platform sync, 29 Sep",
@@ -379,12 +379,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:21.520003+00:00"
+            "created_at": "2026-10-13T09:10:51.396257+00:00"
           }
         },
         {
           "cursor": 13,
-          "at": "2026-10-06T21:49:23Z",
+          "at": "2026-10-13T09:10:53Z",
           "type": "item.added",
           "item": {
             "id": 4,
@@ -402,7 +402,7 @@
               "name": "Platform sync, 29 Sep",
               "folder": "",
               "page": 0,
-              "anchor": "c40dd79947a14f41b3a90470a377e932",
+              "anchor": "1dda8e266cd94d93a09d07a3dd0b341e",
               "kind": "doc",
               "key": "platform-sync-29-sep-l14",
               "title": "Platform sync, 29 Sep",
@@ -412,12 +412,12 @@
             "page": null,
             "edited": false,
             "slot": null,
-            "created_at": "2026-10-06T21:49:21.520003+00:00"
+            "created_at": "2026-10-13T09:10:51.396257+00:00"
           }
         },
         {
           "cursor": 14,
-          "at": "2026-10-06T21:49:24Z",
+          "at": "2026-10-13T09:10:54Z",
           "type": "item.removed",
           "item": {
             "id": 6
@@ -425,7 +425,7 @@
         },
         {
           "cursor": 15,
-          "at": "2026-10-06T21:49:24Z",
+          "at": "2026-10-13T09:10:54Z",
           "type": "settings.changed",
           "settings": {
             "watch": [],
@@ -442,7 +442,7 @@
         },
         {
           "cursor": 16,
-          "at": "2026-10-06T21:49:25Z",
+          "at": "2026-10-13T09:10:55Z",
           "type": "settings.changed",
           "settings": {
             "watch": [],
