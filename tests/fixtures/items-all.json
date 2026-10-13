@@ -25,7 +25,7 @@
           "name": "",
           "folder": "",
           "page": 0,
-          "anchor": "630fe4fe487646868d082deb64f1d00b",
+          "anchor": "380bc315c6004414b1fe8062606e9495",
           "kind": null,
           "key": null,
           "title": null,
@@ -35,7 +35,7 @@
         "page": null,
         "edited": false,
         "slot": null,
-        "created_at": "2026-10-06T21:49:19.454008+00:00"
+        "created_at": "2026-10-13T09:10:49.137786+00:00"
       },
       {
         "id": 2,
@@ -53,7 +53,7 @@
           "name": "",
           "folder": "",
           "page": 0,
-          "anchor": "44969462d44b4c5dbb61f25f203424e2",
+          "anchor": "5f959b7a4aec478390abbc3c6a87e276",
           "kind": null,
           "key": null,
           "title": null,
@@ -63,7 +63,7 @@
         "page": null,
         "edited": false,
         "slot": null,
-        "created_at": "2026-10-06T21:49:19.751931+00:00"
+        "created_at": "2026-10-13T09:10:49.459233+00:00"
       },
       {
         "id": 4,
@@ -81,7 +81,7 @@
           "name": "Platform sync, 29 Sep",
           "folder": "",
           "page": 0,
-          "anchor": "c40dd79947a14f41b3a90470a377e932",
+          "anchor": "1dda8e266cd94d93a09d07a3dd0b341e",
           "kind": "doc",
           "key": "platform-sync-29-sep-l14",
           "title": "Platform sync, 29 Sep",
@@ -91,7 +91,7 @@
         "page": null,
         "edited": false,
         "slot": null,
-        "created_at": "2026-10-06T21:49:21.520003+00:00"
+        "created_at": "2026-10-13T09:10:51.396257+00:00"
       },
       {
         "id": 7,
@@ -109,7 +109,7 @@
           "name": "",
           "folder": "",
           "page": 0,
-          "anchor": "434e075dbdf74cc386ae173d61342009",
+          "anchor": "b3b35ec236ef4015851edebed5cc6868",
           "kind": null,
           "key": null,
           "title": null,
@@ -119,7 +119,7 @@
         "page": null,
         "edited": false,
         "slot": null,
-        "created_at": "2026-10-06T21:49:22.698512+00:00"
+        "created_at": "2026-10-13T09:10:52.695664+00:00"
       }
     ]
   }
