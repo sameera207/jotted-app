@@ -102,6 +102,19 @@ test("changes made elsewhere arrive live", async ({ page }) => {
   await expect(page.locator(".banner")).toContainText("The tablet went away");
 });
 
+test("sync problems share one banner, and a clean check clears it", async ({ page }) => {
+  for (const time of ["11:09:04", "12:09:05"]) {
+    await fake(page, "event", "check.started", "{}");
+    await fake(page, "event", "source.error", JSON.stringify({ message: `connection reset by peer at ${time}` }));
+    await fake(page, "event", "check.finished", JSON.stringify({ new: 0, updated: 0, missing: 0, pages_read: 0, errors: 1 }));
+  }
+  await expect(page.locator(".banner")).toHaveText(/The last check had 1 problem: connection reset by peer at 12:09:05/);
+  await expect(page.locator(".banner")).toHaveCount(1);
+  await page.getByRole("button", { name: "Check now" }).click();
+  await expect(page.getByText("Synced with your reMarkable just now")).toBeVisible();
+  await expect(page.locator(".banner")).toHaveCount(0);
+});
+
 test("works from the keyboard", async ({ page }) => {
   await page.keyboard.press("n");
   await expect(page.getByRole("textbox", { name: "New item" })).toBeFocused();

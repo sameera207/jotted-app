@@ -116,6 +116,27 @@ function addBanner(message: string, action: Banner["action"]) {
   set((s) => ({ banners: [...s.banners.filter((b) => b.id !== id), { id, message, action }] }));
 }
 
+/** Sync problems share one banner, replaced by each check and cleared by a clean one. */
+const SYNC_BANNER = "sync";
+/** Long enough for the gist; the CLI's messages can carry a whole HTTP error. */
+const SYNC_MESSAGE_MAX = 160;
+
+function setSyncBanner(message: string | null) {
+  set((s) => {
+    const others = s.banners.filter((b) => b.id !== SYNC_BANNER);
+    return { banners: message === null ? others : [...others, { id: SYNC_BANNER, message, action: null }] };
+  });
+}
+
+/** One line, cut to SYNC_MESSAGE_MAX characters. */
+export function shortSyncMessage(message: string): string {
+  const line = message.trim().split("\n")[0].replace(/\s+/g, " ");
+  return line.length <= SYNC_MESSAGE_MAX ? line : `${line.slice(0, SYNC_MESSAGE_MAX - 1).trimEnd()}…`;
+}
+
+/** The last source.error since the check started, for the check.finished banner. */
+let lastSourceError: string | null = null;
+
 export function dismissBanner(id: string) {
   set((s) => ({ banners: s.banners.filter((b) => b.id !== id) }));
 }
@@ -196,11 +217,19 @@ function without(record: Record<number, Item>, id: number): Record<number, Item>
 export async function applyEvent(event: JottedEvent) {
   set((s) => reduce(s, event));
   if (event.type === "check.finished" || event.type === "todo.published") void reloadStatus();
-  if (event.type === "check.finished" && event.errors > 0) {
-    // The source's own source.error event carries the message; this only says it happened.
-    addBanner(`The last check had ${event.errors} problem${event.errors === 1 ? "" : "s"}.`, null);
+  if (event.type === "check.started") lastSourceError = null;
+  if (event.type === "source.error") {
+    lastSourceError = shortSyncMessage(event.message);
+    setSyncBanner(lastSourceError);
   }
-  if (event.type === "source.error") addBanner(event.message, null);
+  if (event.type === "check.finished") {
+    if (event.errors === 0) setSyncBanner(null);
+    else {
+      const count = `The last check had ${event.errors} problem${event.errors === 1 ? "" : "s"}`;
+      setSyncBanner(lastSourceError ? `${count}: ${lastSourceError}` : `${count}.`);
+    }
+    lastSourceError = null;
+  }
 }
 
 export async function reloadStatus() {

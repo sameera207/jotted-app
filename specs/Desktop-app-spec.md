@@ -117,11 +117,13 @@ Events update it:
 | `item.added`, `item.changed` | Upsert `item` by `id` |
 | `item.removed` | Delete by `id` |
 | `check.started` | Sync state: checking |
-| `check.finished` | Sync state: idle; reload `status`; if `errors` > 0, show the last `source.error` |
+| `check.finished` | Sync state: idle; reload `status`; if `errors` > 0, the sync banner says how many and the last `source.error`; if 0, the sync banner goes |
 | `todo.published` | Reload `status` |
 | `settings.changed` | Replace `settings` |
-| `source.error` | Banner with `message` |
+| `source.error` | The sync banner shows `message` (first line, cut to 160 characters) |
 | anything else | Ignored |
+
+Sync problems share one banner: each `source.error` and `check.finished` replaces it, so failed checks never stack up, and a clean check clears it. Other banners are unchanged, and any banner can be dismissed.
 
 If the saved cursor is older than the week of events Jotted keeps, reload everything and carry on from the latest cursor.
 
