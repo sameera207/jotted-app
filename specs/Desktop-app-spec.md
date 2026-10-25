@@ -166,7 +166,7 @@ When `complete` is true, start the server and follower, run `check` once, and op
 
 ![To-do window](../docs/mockups/01-todo.png)
 
-The main window: sidebar (To-do with open count, Notebooks, Settings, Watching folders, device status), a title bar with sync status and "Check now", and the sheet.
+The main window (mockups "A · Focus" in `specs/`): one 40 px bar with the screens (To-do with its open count, Notebooks, Settings), the device and when it was last synced, and "Check now"; under it the screen, flat on the paper, its title over an ink rule. On To-do, a footer says what Jotted reads and the keys; "Where it came from" opens beside the list.
 
 - **Load:** `items --status all`. Re-rendered from the store as events arrive.
 - **Filters:** Open / Done / All, and Everyone / Mine / Others (`owner`: `me` is Mine, `someone_else` is Others, `unclear` shows in Mine with a "?" mark).
@@ -241,7 +241,7 @@ Taken from the mockups. Tokens live in `src/styles/tokens.css`:
 - No colour other than the highlighter. Status is shown with words and marks, never colour alone.
 - Components: `Sheet`, `Row`, `Checkbox`, `FilterTabs`, `SourceLine`, `InkImage`, `PillButton`, `Switch`, `SecretField`, `CodeField`, `ProviderCard`, `Banner`.
 - Accessibility: real buttons and inputs with labels, visible focus, everything reachable by keyboard, 44 px hit areas.
-- Window: minimum 420 × 600; the sidebar collapses to icons below 760 px.
+- Window: minimum 420 × 600; below 760 px the bar drops the sync line and "Where it came from" covers the list.
 
 ## Repo layout
 

@@ -32,7 +32,7 @@ const INTERVALS: [number, string][] = [
 export function Settings({ onReview, onReconnect }: { onReview: () => void; onReconnect: () => void }) {
   useEffect(() => void loadClaude(), []);
   return (
-    <div className="todo">
+    <div className="page">
       <Sheet title="Settings">
         <DeviceSection onReconnect={onReconnect} />
         <TodoSection />

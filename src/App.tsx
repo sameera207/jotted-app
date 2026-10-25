@@ -5,7 +5,7 @@ import { Toast } from "./components/Toast";
 import { transport } from "./jotted/transport";
 import { onNavigate, setDockIcon, setKeepRunning, setTrayCount, setTrayState } from "./platform";
 import { readPrefs } from "./store/prefs";
-import { ago, folderLabel } from "./store/labels";
+import { ago } from "./store/labels";
 import { startup } from "./store/startup";
 import { checkNow, closePanel, dismissBanner, requestPeek, reviewProposals, useStore } from "./store/store";
 import { Notebooks } from "./screens/Notebooks";
@@ -92,7 +92,7 @@ function Main() {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "r") {
         e.preventDefault(); // ⌘R checks now, never reloads the window
         void checkNow();
-      } else if (!typing && !e.metaKey && !e.ctrlKey && e.key.toLowerCase() === "n") {
+      } else if (e.key.toLowerCase() === "n" && ((e.metaKey || e.ctrlKey) || (!typing && !e.altKey))) {
         e.preventDefault();
         setView("todo");
         requestAnimationFrame(() => newRow.current?.focus());
@@ -104,40 +104,37 @@ function Main() {
 
   return (
     <div className="app">
-      <TitleBar />
-      <div className="app-body">
-        <Sidebar view={view} onView={setView} />
-        <main className="content">
-          {banners.length > 0 && (
-            <div className="banners">
-              {banners.map((b) => (
-                <Banner
-                  key={b.id}
-                  banner={b}
-                  onDismiss={() => dismissBanner(b.id)}
-                  onAction={(action) => {
-                    dismissBanner(b.id);
-                    if (action === "reconnect") reconnect();
-                    if (action === "check-key") setView("settings");
-                  }}
-                />
-              ))}
-            </div>
-          )}
-          {view === "todo" && <Todo newRowRef={newRow} />}
-          {view === "notebooks" && <Notebooks />}
-          {view === "settings" && (
-            <Settings
-              onReconnect={reconnect}
-              onReview={() => {
-                setView("todo");
-                reviewProposals();
-              }}
-            />
-          )}
-          <Toast />
-        </main>
-      </div>
+      <WindowBar view={view} onView={setView} />
+      <main className="content">
+        {banners.length > 0 && (
+          <div className="banners">
+            {banners.map((b) => (
+              <Banner
+                key={b.id}
+                banner={b}
+                onDismiss={() => dismissBanner(b.id)}
+                onAction={(action) => {
+                  dismissBanner(b.id);
+                  if (action === "reconnect") reconnect();
+                  if (action === "check-key") setView("settings");
+                }}
+              />
+            ))}
+          </div>
+        )}
+        {view === "todo" && <Todo newRowRef={newRow} />}
+        {view === "notebooks" && <Notebooks />}
+        {view === "settings" && (
+          <Settings
+            onReconnect={reconnect}
+            onReview={() => {
+              setView("todo");
+              reviewProposals();
+            }}
+          />
+        )}
+        <Toast />
+      </main>
       {panel !== null && <ErrorPanel message={panel} />}
     </div>
   );
@@ -152,101 +149,57 @@ function useNow(everyMs: number) {
   return now;
 }
 
-function TitleBar() {
+/** The window's one bar: the screens, then the device and when it was last read. */
+function WindowBar({ view, onView }: { view: View; onView: (v: View) => void }) {
   const status = useStore((s) => s.status);
   const sync = useStore((s) => s.sync);
+  const open = useStore((s) => Object.values(s.items).filter((i) => i.status === "open").length);
+  const proposed = useStore((s) => Object.keys(s.proposed).length);
   const now = useNow(30_000);
   const when = ago(status?.last_collected_at ?? null, now);
-  const device = status?.source.device ?? "your reMarkable";
-  const text =
-    sync === "checking" ? "Checking…" : when ? `Synced with ${device} ${when}` : `Not synced with ${device} yet`;
+  const device = status?.source.label ?? "reMarkable";
+  const text = sync === "checking" ? "Checking…" : when ? `${device} · synced ${when}` : `${device} · not synced yet`;
+  const nav: { id: View; label: string; count?: number; extra?: string }[] = [
+    { id: "todo", label: "To-do", count: open, extra: proposed ? `${proposed} proposed` : undefined },
+    { id: "notebooks", label: "Notebooks" },
+    { id: "settings", label: "Settings" },
+  ];
   return (
-    <header className="titlebar" data-tauri-drag-region>
-      <span className="titlebar-title" data-tauri-drag-region>
-        Jotted
-      </span>
-      <span className="titlebar-sync" role="status" data-tauri-drag-region>
+    <header className="windowbar" data-tauri-drag-region>
+      <nav className="nav" aria-label="Jotted">
+        {nav.map((n) => (
+          <button
+            key={n.id}
+            type="button"
+            className={`nav-item ${view === n.id ? "nav-on" : ""}`}
+            aria-current={view === n.id ? "page" : undefined}
+            onClick={() => onView(n.id)}
+          >
+            {n.label}
+            {n.count !== undefined && <span className="nav-count">{n.count}</span>}
+            {n.extra && <span className="nav-extra">· {n.extra}</span>}
+          </button>
+        ))}
+      </nav>
+      <span className="windowbar-gap" data-tauri-drag-region />
+      <span className="windowbar-sync" role="status" data-tauri-drag-region>
         <span className={`sync-dot ${sync === "checking" ? "sync-dot-busy" : ""}`} aria-hidden="true" />
         {text}
       </span>
-      <PillButton
-        icon={<span aria-hidden="true">↻</span>}
-        onClick={() => void checkNow()}
-        disabled={sync === "checking"}
+      <button
+        type="button"
+        className="icon-button"
+        aria-label="Check now"
         title="Check now (⌘R)"
+        disabled={sync === "checking"}
+        onClick={() => void checkNow()}
       >
-        Check now
-      </PillButton>
+        <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-3-6.7L21 8" />
+          <path d="M21 3v5h-5" />
+        </svg>
+      </button>
     </header>
-  );
-}
-
-function Sidebar({ view, onView }: { view: View; onView: (v: View) => void }) {
-  const items = useStore((s) => s.items);
-  const settings = useStore((s) => s.settings);
-  const status = useStore((s) => s.status);
-  const proposed = useStore((s) => Object.keys(s.proposed).length);
-  const open = Object.values(items).filter((i) => i.status === "open");
-  const perFolder = (path: string) => open.filter((i) => i.source.folder === path || i.source.folder.startsWith(`${path}/`)).length;
-  const nav: { id: View; label: string; icon: string; count?: number; extra?: string }[] = [
-    { id: "todo", label: "To-do", icon: "☰", count: open.length, extra: proposed ? `${proposed} proposed` : undefined },
-    { id: "notebooks", label: "Notebooks", icon: "▯" },
-    { id: "settings", label: "Settings", icon: "☼" },
-  ];
-  const source = status?.source;
-  return (
-    <nav className="sidebar" aria-label="Jotted">
-      <ul className="nav">
-        {nav.map((n) => (
-          <li key={n.id}>
-            <button
-              type="button"
-              className={`nav-item ${view === n.id ? "nav-on" : ""}`}
-              aria-current={view === n.id ? "page" : undefined}
-              onClick={() => onView(n.id)}
-            >
-              <span className="nav-icon" aria-hidden="true">
-                {n.icon}
-              </span>
-              <span className="nav-label">
-                {n.label}
-                {n.extra && <span className="nav-extra"> · {n.extra}</span>}
-              </span>
-              {n.count !== undefined && <span className="nav-count">{n.count}</span>}
-            </button>
-          </li>
-        ))}
-      </ul>
-      {settings && settings.watch.length > 0 && (
-        <section className="watching">
-          <h2>Watching</h2>
-          <ul>
-            {settings.watch.map((path) => (
-              <li key={path} className="watching-item">
-                <span className="nav-icon" aria-hidden="true">
-                  ⌸
-                </span>
-                <span className="nav-label">{folderLabel(path) || "Everything"}</span>
-                <span className="nav-count" aria-label={`${perFolder(path)} open`}>
-                  {perFolder(path)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {source && (
-        <footer className="device">
-          <span className="device-mark" aria-hidden="true" />
-          <span>
-            <strong>{source.label}</strong>
-            <br />
-            {source.connected ? "Connected" : "Not connected"}
-            {status?.todo.enabled ? " · To-do on tablet" : ""}
-          </span>
-        </footer>
-      )}
-    </nav>
   );
 }
 

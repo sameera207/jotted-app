@@ -3,12 +3,14 @@ type Props<T extends string> = {
   options: { value: T; label: string }[];
   value: T;
   onChange: (value: T) => void;
+  /** "strong": the chosen tab filled with ink, for the main filter; otherwise a light wash. */
+  tone?: "strong";
 };
 
-/** A row of word tabs; the chosen one is bold and underlined (never colour alone). */
-export function FilterTabs<T extends string>({ label, options, value, onChange }: Props<T>) {
+/** A row of pill tabs; the chosen one is filled and heavier (never colour alone). */
+export function FilterTabs<T extends string>({ label, options, value, onChange, tone }: Props<T>) {
   return (
-    <div className="tabs" role="radiogroup" aria-label={label}>
+    <div className={`tabs ${tone === "strong" ? "tabs-strong" : ""}`} role="radiogroup" aria-label={label}>
       {options.map((o) => (
         <button
           key={o.value}
