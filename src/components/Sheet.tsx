@@ -1,14 +1,15 @@
 import type { ReactNode } from "react";
 
-/** A sheet of paper: a title with a hairline under it, then its contents. */
+/** A screen of the window: its title over a ruled bar, then its contents. */
 export function Sheet({ title, meta, children }: { title: string; meta?: string; children: ReactNode }) {
   return (
     <section className="sheet" aria-labelledby="sheet-title">
-      <header className="sheet-head">
+      <header className="toolbar">
         <h1 id="sheet-title">{title}</h1>
+        <span className="toolbar-gap" />
         {meta && <span className="sheet-meta">{meta}</span>}
       </header>
-      {children}
+      <div className="sheet-body">{children}</div>
     </section>
   );
 }

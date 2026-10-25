@@ -1,9 +1,8 @@
 import { forwardRef, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { Item, Status } from "../jotted/types.gen";
-import { ownerLabel, sourceLabel } from "../store/labels";
+import { ownerLabel, shortSourceLabel, sourceLabel } from "../store/labels";
 import { Checkbox } from "./Checkbox";
 import { InkImage } from "./InkImage";
-import { SourceLine } from "./SourceLine";
 
 type Props = {
   item: Item;
@@ -19,17 +18,21 @@ type Props = {
   /** Open "Where it came from"; omitted when there's nothing to show. */
   onPeek?: () => void;
   selected?: boolean;
+  /** Beside "Where it came from": a shorter source, and the owner after the text. */
+  compact?: boolean;
 };
 
 export const Row = forwardRef<HTMLLIElement, Props>(function Row(
-  { item, status, error, editing, onEditing, onToggle, onEdit, onDismiss, onKeyDown, onFocus, onPeek, selected },
+  { item, status, error, editing, onEditing, onToggle, onEdit, onDismiss, onKeyDown, onFocus, onPeek, selected, compact },
   ref,
 ) {
   const done = item.status === "done";
-  const owner = ownerLabel(item);
+  const others = ownerLabel(item);
+  const owner = others ?? (item.owner === "me" ? "You" : null);
   const added = item.origin === "web";
   // Rows written on the To-do document show their ink, as the tablet does, until edited.
   const ink = item.written && !item.edited;
+  const source = compact ? shortSourceLabel(item, status) : sourceLabel(item, status).text;
 
   return (
     <li
@@ -45,21 +48,17 @@ export const Row = forwardRef<HTMLLIElement, Props>(function Row(
         {editing ? (
           <EditField text={item.text} onDone={(text) => (onEditing(false), text !== null && onEdit(text))} />
         ) : (
-          <button type="button" className="row-text" tabIndex={-1} onClick={() => onEditing(true)} title="Edit">
-            {ink ? <InkImage docId={item.source.doc_id} anchor={item.source.anchor} text={item.text} /> : item.text}
-            {item.owner === "unclear" && (
-              <span className="row-unclear" title="Not sure whose this is">
-                {" "}?
-              </span>
-            )}
-          </button>
-        )}
-        {onPeek ? (
-          <button type="button" className="source-button" tabIndex={-1} onClick={onPeek} title="Where it came from">
-            <SourceLine label={sourceLabel(item, status)} mark={status?.source.mark ?? "rM"} />
-          </button>
-        ) : (
-          <SourceLine label={sourceLabel(item, status)} mark={status?.source.mark ?? "rM"} />
+          <span className="row-line">
+            <button type="button" className="row-text" tabIndex={-1} onClick={() => onEditing(true)} title="Edit">
+              {ink ? <InkImage docId={item.source.doc_id} anchor={item.source.anchor} text={item.text} /> : item.text}
+              {item.owner === "unclear" && (
+                <span className="row-unclear" title="Not sure whose this is">
+                  {" "}?
+                </span>
+              )}
+            </button>
+            {compact && others && <span className="row-owner-inline">{others}</span>}
+          </span>
         )}
         {error && (
           <span className="row-error" role="alert">
@@ -67,7 +66,14 @@ export const Row = forwardRef<HTMLLIElement, Props>(function Row(
           </span>
         )}
       </div>
-      {owner && <span className="row-owner">{owner}</span>}
+      {onPeek ? (
+        <button type="button" className="row-source row-source-link" tabIndex={-1} onClick={onPeek} title="Where it came from">
+          {source}
+        </button>
+      ) : (
+        <span className="row-source">{source}</span>
+      )}
+      {!compact && <span className="row-owner">{owner}</span>}
       <button
         type="button"
         className="row-dismiss"
@@ -76,7 +82,9 @@ export const Row = forwardRef<HTMLLIElement, Props>(function Row(
         title={added ? "Delete" : "Not an action"}
         onClick={onDismiss}
       >
-        ×
+        <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
       </button>
     </li>
   );

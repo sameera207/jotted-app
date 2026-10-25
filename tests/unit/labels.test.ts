@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Item, Status } from "../../src/jotted/types.gen";
-import { ago, folderLabel, paginate, passes, sourceLabel } from "../../src/store/labels";
+import { ago, folderLabel, notebookOf, notebookOptions, paginate, passes, shortSourceLabel, sourceLabel } from "../../src/store/labels";
 import { data } from "./helpers";
 
 const base = data<Item>("items-add");
@@ -13,7 +13,7 @@ const status = data<Status>("status");
 
 describe("source lines", () => {
   it("names items added in Jotted", () => {
-    expect(sourceLabel(item(), status)).toEqual({ kind: "added", text: "Added in Jotted" });
+    expect(sourceLabel(item(), status)).toEqual({ kind: "added", text: "Added here" });
   });
 
   it("names the folder, document and page", () => {
@@ -24,6 +24,25 @@ describe("source lines", () => {
   it("names a row written on the To-do document, by its row", () => {
     const i = item({ origin: "remarkable", written: true, slot: 21, source: { folder: status.todo.folder, name: status.todo.name } });
     expect(sourceLabel(i, status)).toEqual({ kind: "todo", text: "Written on the To-do · row 2" });
+  });
+
+  it("shortens the source to the document and page beside Where it came from", () => {
+    const page = item({ origin: "remarkable", source: { folder: "/Meeting Notes/2026", name: "Weekly sync", page: 3 } });
+    expect(shortSourceLabel(page, status)).toBe("Weekly sync · p3");
+    const row = item({ origin: "remarkable", written: true, slot: 1, source: { folder: status.todo.folder, name: status.todo.name } });
+    expect(shortSourceLabel(row, status)).toBe("To-do · row 2");
+    expect(shortSourceLabel(item(), status)).toBe("Added here");
+  });
+
+  it("knows the notebook a row came from", () => {
+    const sync = item({ origin: "remarkable", source: { folder: "/Meeting Notes", name: "Weekly sync" } });
+    const crit = item({ origin: "remarkable", source: { folder: "/Meeting Notes", name: "Design crit" } });
+    expect(notebookOf(sync)).toBe("/Meeting Notes/Weekly sync");
+    expect(notebookOf(item())).toBeNull();
+    expect(notebookOptions([sync, crit, sync, item()])).toEqual([
+      { value: "/Meeting Notes/Design crit", label: "Design crit" },
+      { value: "/Meeting Notes/Weekly sync", label: "Weekly sync" },
+    ]);
   });
 
   it("reads folder paths", () => {

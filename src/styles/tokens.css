@@ -1,20 +1,26 @@
-/* Design tokens, from the mockups (spec: Visual design). Light e-ink paper only for v1. */
+/* Design tokens, from the mockups ("A · Focus" in specs/). Light e-ink paper only for v1. */
 :root {
-  --desk: #dedcd6;      /* window background around the sheet */
+  --desk: #f6f5f1;      /* the window: the same paper as the list */
   --paper: #f6f5f1;     /* sheets and cards */
+  --wash: #e9e7e1;      /* the current tab, the selected row */
+  --panel: #efeee9;     /* "Where it came from" beside the list */
   --ink: #1d1d1b;       /* text, checkboxes, ticks, primary buttons */
   --pencil: #5e5d58;    /* secondary text (4.5:1 on paper) */
-  --faint: #8a8984;     /* done items, placeholders */
-  --rule: #e2e0d9;      /* row rules */
-  --hairline: #8a8984;  /* the rule under a sheet's title */
+  --faint: #8a8984;     /* done items, placeholders, sources */
+  --rule: #e2e0d9;      /* row rules, bar borders */
+  --line: #c9c7c0;      /* secondary button borders */
+  --hairline: #1d1d1b;  /* the rule under a page's title */
   --highlighter: #f1e38a;
 
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --sheet-max: 680px;
-  --row-min: 60px;
-  --hit: 44px;
-  --shadow-sheet: 0 1px 2px rgb(29 29 27 / 0.08), 0 12px 32px rgb(29 29 27 / 0.1);
+  --sheet-max: 760px;
+  --row-min: 44px;
+  --hit: 44px;          /* touch-sized targets: the tray, setup */
+  --button: 28px;       /* icon buttons and tabs in the window bar and toolbars */
+  --gutter: 48px;
+  --shadow-sheet: 0 0 0 1px var(--rule);
+  --shadow-page: 0 1px 2px rgb(29 29 27 / 0.08);
   --radius: 2px;
 }

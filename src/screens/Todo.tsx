@@ -1,17 +1,15 @@
-// The To-do sheet (spec: Screens › 3). The same rows as the To-do document on the tablet:
-// with the document on, its pages (20 rows each, by slot); with it off, one sheet.
+// The To-do list (spec: Screens › 3; mockups "A · Focus" in specs/). The same rows as the To-do
+// document on the tablet: with the document on, its pages (20 rows each, by slot); with it off, one list.
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { ClaudePrompts } from "../components/Claude";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { FilterTabs } from "../components/FilterTabs";
-import { PillButton } from "../components/PillButton";
 import { Proposals } from "../components/Proposals";
 import { canPeek, SourcePeek } from "../components/SourcePeek";
 import { Row } from "../components/Row";
-import { Sheet } from "../components/Sheet";
 import type { Item } from "../jotted/types.gen";
-import { paginate, passes, sortItems, type OwnerFilter, type StatusFilter } from "../store/labels";
+import { folderLabel, notebookOf, notebookOptions, paginate, passes, sortItems, type OwnerFilter, type StatusFilter } from "../store/labels";
 import { add, clearRowError, dismiss, edit, printFresh, reopen, tick, useStore } from "../store/store";
 
 const STATUS_TABS: { value: StatusFilter; label: string }[] = [
@@ -24,8 +22,6 @@ const OWNER_TABS: { value: OwnerFilter; label: string }[] = [
   { value: "mine", label: "Mine" },
   { value: "others", label: "Others" },
 ];
-/** Ruled lines under the last row, so a short list still looks like a sheet. */
-const MIN_LINES = 8;
 
 export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElement | null> }) {
   const items = useStore((s) => s.items);
@@ -48,9 +44,12 @@ export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElemen
   const rowRefs = useRef(new Map<number, HTMLLIElement>());
 
   const paged = settings?.todo_enabled ?? false;
+  const [notebook, setNotebook] = useState("");
+  const notebooks = useMemo(() => notebookOptions(Object.values(items)), [items]);
   const shown = useMemo(
-    () => Object.values(items).filter((i) => passes(i, statusFilter, ownerFilter)),
-    [items, statusFilter, ownerFilter],
+    () =>
+      Object.values(items).filter((i) => passes(i, statusFilter, ownerFilter) && (!notebook || notebookOf(i) === notebook)),
+    [items, statusFilter, ownerFilter, notebook],
   );
   const pages = useMemo(() => (paged ? paginate(shown) : [sortItems(shown)]), [paged, shown]);
   const current = Math.min(page, pages.length - 1);
@@ -77,12 +76,14 @@ export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElemen
     } else if (e.key === " ") {
       e.preventDefault();
       void (item.status === "done" ? reopen(item.id) : tick(item.id));
-    } else if (e.key === "Enter") {
+    } else if (e.key === "Enter" || e.key.toLowerCase() === "o") {
+      // Open where it came from; a row with nothing to show opens for editing instead.
+      e.preventDefault();
+      if (canPeek(item)) setPeek(item.id);
+      else if (e.key === "Enter") setEditing(item.id);
+    } else if (e.key.toLowerCase() === "e") {
       e.preventDefault();
       setEditing(item.id);
-    } else if (e.key.toLowerCase() === "o" && canPeek(item)) {
-      e.preventDefault();
-      setPeek(item.id);
     } else if (e.key === "Backspace" || e.key === "Delete") {
       e.preventDefault();
       focusRow((rows[index + 1] ?? rows[index - 1])?.id);
@@ -90,89 +91,135 @@ export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElemen
     }
   };
 
-  const meta = [
-    paged ? `page ${current + 1} of ${pages.length}` : null,
-    `${openCount} open`,
-  ].filter(Boolean).join(" · ");
+  const meta = peek !== null ? `${openCount} open` : `${openCount} open · ${doneCount} done`;
 
   // The roving focus target: the focused row, or the first one.
   const tabTarget = rows.some((r) => r.id === focused) ? focused : rows[0]?.id;
+  const peeking = peek !== null;
+  const reading = (settings?.watch ?? []).map((w) => folderLabel(w) || "Everything");
 
   return (
-    <div className={`todo ${peek !== null ? "todo-peeking" : ""}`}>
+    <div className={`todo ${peeking ? "todo-peeking" : ""}`}>
       <div className="todo-main">
-      <ClaudePrompts />
-      <Proposals />
-      <Sheet title="To-do" meta={meta}>
-        <div className="filters">
-          <FilterTabs label="Status" options={STATUS_TABS} value={statusFilter} onChange={(v) => (setStatusFilter(v), setPage(0))} />
-          <span className="filters-dot" aria-hidden="true">·</span>
-          <FilterTabs label="Whose" options={OWNER_TABS} value={ownerFilter} onChange={(v) => (setOwnerFilter(v), setPage(0))} />
-          {paged && (
-            <PillButton
-              className="filters-end"
+        <div className="toolbar">
+          <h1 id="todo-title">To-do</h1>
+          <FilterTabs label="Status" tone="strong" options={STATUS_TABS} value={statusFilter} onChange={(v) => (setStatusFilter(v), setPage(0))} />
+          {!peeking && (
+            <>
+              <span className="toolbar-rule" aria-hidden="true" />
+              <FilterTabs label="Whose" options={OWNER_TABS} value={ownerFilter} onChange={(v) => (setOwnerFilter(v), setPage(0))} />
+              {notebooks.length > 0 && (
+                <label className="select-pill">
+                  <span className="visually-hidden">Notebook</span>
+                  <select value={notebook} onChange={(e) => (setNotebook(e.target.value), setPage(0))}>
+                    <option value="">All notebooks</option>
+                    {notebooks.map((n) => (
+                      <option key={n.value} value={n.value}>
+                        {n.label}
+                      </option>
+                    ))}
+                  </select>
+                  <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </label>
+              )}
+            </>
+          )}
+          <span className="toolbar-gap" />
+          {paged && pages.length > 1 && (
+            <nav className="pager" aria-label="Pages">
+              <button type="button" className="icon-button" aria-label="Previous page" disabled={current === 0} onClick={() => setPage(current - 1)}>
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+              <span>
+                page {current + 1} of {pages.length}
+              </span>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Next page"
+                disabled={current === pages.length - 1}
+                onClick={() => setPage(current + 1)}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+            </nav>
+          )}
+          <span className="todo-meta">{meta}</span>
+          {paged && !peeking && (
+            <button
+              type="button"
+              className="toolbar-button"
               disabled={doneCount === 0 || printingFresh}
               title="Print the To-do document again with open items only"
               onClick={() => setConfirmFresh(true)}
             >
               {printingFresh ? "Printing…" : "Clear done"}
-            </PillButton>
+            </button>
           )}
         </div>
-        <ul className="rows" aria-label="To-do items">
-          {rows.map((item, index) => (
-            <Row
-              key={item.id}
-              ref={(el) => {
-                if (el) {
-                  rowRefs.current.set(item.id, el);
-                  el.tabIndex = item.id === tabTarget ? 0 : -1;
-                } else rowRefs.current.delete(item.id);
-              }}
-              item={item}
-              status={status}
-              error={rowErrors[String(item.id)]}
-              editing={editing === item.id}
-              onEditing={(on) => {
-                setEditing(on ? item.id : null);
-                if (!on) requestAnimationFrame(() => focusRow(item.id));
-              }}
-              onToggle={() => void (item.status === "done" ? reopen(item.id) : tick(item.id))}
-              onEdit={(text) => void edit(item.id, text)}
-              onDismiss={() => void dismiss(item.id)}
-              onKeyDown={(e) => onRowKey(e, item, index)}
-              onFocus={() => setFocused(item.id)}
-              onPeek={canPeek(item) ? () => setPeek(item.id) : undefined}
-              selected={peek === item.id}
-            />
-          ))}
-          {statusFilter !== "done" && (
-            <NewRow inputRef={newRowRef} error={rowErrors.new} onUp={() => focusRow(rows[rows.length - 1]?.id)} />
-          )}
-          {Array.from({ length: Math.max(0, MIN_LINES - rows.length - 1) }, (_, i) => (
-            <li key={`blank-${i}`} className="row row-blank" aria-hidden="true" />
-          ))}
-        </ul>
-        {rows.length === 0 && statusFilter !== "open" && <p className="empty">Nothing here.</p>}
-        <p className="sheet-foot">
-          Tick a box to mark it done, or write a new item in an empty row.
-          {paged && " Same list, same rows as the To-do document on your tablet."}
-        </p>
-      </Sheet>
-      {paged && pages.length > 1 && (
-        <nav className="pager" aria-label="Pages">
-          <button type="button" aria-label="Previous page" disabled={current === 0} onClick={() => setPage(current - 1)}>
-            ‹
-          </button>
-          <span>
-            {current + 1} of {pages.length}
-          </span>
-          <button type="button" aria-label="Next page" disabled={current === pages.length - 1} onClick={() => setPage(current + 1)}>
-            ›
-          </button>
-        </nav>
-      )}
+        <div className="todo-scroll">
+          <ClaudePrompts />
+          <Proposals />
+          <ul className="rows" aria-labelledby="todo-title">
+            {rows.map((item, index) => (
+              <Row
+                key={item.id}
+                ref={(el) => {
+                  if (el) {
+                    rowRefs.current.set(item.id, el);
+                    el.tabIndex = item.id === tabTarget ? 0 : -1;
+                  } else rowRefs.current.delete(item.id);
+                }}
+                item={item}
+                status={status}
+                error={rowErrors[String(item.id)]}
+                editing={editing === item.id}
+                onEditing={(on) => {
+                  setEditing(on ? item.id : null);
+                  if (!on) requestAnimationFrame(() => focusRow(item.id));
+                }}
+                onToggle={() => void (item.status === "done" ? reopen(item.id) : tick(item.id))}
+                onEdit={(text) => void edit(item.id, text)}
+                onDismiss={() => void dismiss(item.id)}
+                onKeyDown={(e) => onRowKey(e, item, index)}
+                onFocus={() => setFocused(item.id)}
+                onPeek={canPeek(item) ? () => setPeek(item.id) : undefined}
+                selected={peek === item.id}
+                compact={peeking}
+              />
+            ))}
+            {statusFilter !== "done" && (
+              <NewRow inputRef={newRowRef} error={rowErrors.new} onUp={() => focusRow(rows[rows.length - 1]?.id)} />
+            )}
+          </ul>
+          {rows.length === 0 && statusFilter !== "open" && <p className="empty">Nothing here.</p>}
+        </div>
       </div>
+      {peek !== null && (
+        <SourcePeek
+          id={peek}
+          onEditText={() => setEditing(peek)}
+          onClose={() => {
+            const id = peek;
+            setPeek(null);
+            requestAnimationFrame(() => focusRow(id));
+          }}
+        />
+      )}
+      {!peeking && (
+        <footer className="todo-foot">
+          <span>{paged ? "Same list as the To-do document on your tablet" : "Tick a box to mark it done, or write a new item in the last row"}</span>
+          <span className="toolbar-gap" />
+          {reading.length > 0 && <span>Reading {reading.join(", ")}</span>}
+          <span>↑↓ move · Space tick · Enter open</span>
+        </footer>
+      )}
       {confirmFresh && (
         <ConfirmDialog
           title="Print a fresh list?"
@@ -186,16 +233,6 @@ export function Todo({ newRowRef }: { newRowRef: React.RefObject<HTMLInputElemen
           Your reMarkable gets a new To-do list with only the {openCount} open item{openCount === 1 ? "" : "s"}. Ticks and
           handwriting on the current list are read first, then it's replaced.
         </ConfirmDialog>
-      )}
-      {peek !== null && (
-        <SourcePeek
-          id={peek}
-          onClose={() => {
-            const id = peek;
-            setPeek(null);
-            requestAnimationFrame(() => focusRow(id));
-          }}
-        />
       )}
     </div>
   );
@@ -235,6 +272,7 @@ function NewRow({ inputRef, error, onUp }: { inputRef: React.RefObject<HTMLInput
           </span>
         )}
       </div>
+      <kbd className="kbd" title="New item">⌘N</kbd>
     </li>
   );
 }

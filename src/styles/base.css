@@ -15,7 +15,7 @@ body {
   background: var(--desk);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   user-select: none;

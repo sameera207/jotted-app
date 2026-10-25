@@ -107,7 +107,7 @@ test.describe("settings", () => {
   test("turning off the To-do document makes the list one sheet", async ({ page }) => {
     await page.getByRole("switch", { name: "Keep a To-do document on the tablet" }).click();
     await page.getByRole("button", { name: "To-do", exact: false }).first().click();
-    await expect(page.locator(".sheet-meta")).not.toContainText("page 1 of");
+    await expect(page.locator(".todo .toolbar")).not.toContainText("page 1 of");
   });
 
   test("replaces the key; a refused one says so by the field", async ({ page }) => {
@@ -150,14 +150,15 @@ test.describe("notebooks", () => {
     await expect(page.getByRole("tree", { name: "Folders" })).toBeVisible();
   });
 
-  test("ticks a folder: a chip, from now on, and the sidebar's Watching", async ({ page }) => {
+  test("ticks a folder: a chip, from now on, and the To-do's Reading line", async ({ page }) => {
     await expect(chip(page, "Books & PDFs")).toHaveCount(0);
     await box(page, "Books & PDFs").click();
     await expect(box(page, "Books & PDFs")).toHaveAttribute("aria-checked", "true");
     await expect(chip(page, "Books & PDFs")).toBeVisible();
     await expect(treeRow(page, "Books & PDFs")).toContainText("from now on");
-    await expect(page.locator(".watching")).toContainText("Books & PDFs");
     await expect(page.locator(".toast")).toContainText("Reading Books & PDFs from now on");
+    await page.getByRole("button", { name: /^To-do/ }).click();
+    await expect(page.locator(".todo-foot")).toContainText("Books & PDFs");
   });
 
   test("ticks a parent: its subfolders are read through it, and their own chips go", async ({ page }) => {
@@ -287,12 +288,40 @@ test.describe("where it came from", () => {
     await row(page, "Book the retro room").getByRole("button", { name: /Weekly sync/ }).click();
     const peek = page.locator(".peek");
     await expect(peek).toContainText("Weekly sync");
-    await expect(peek).toContainText("page 3 of 7");
-    await expect(peek).toContainText("Yes, 93% sure · judged by Claude");
+    await expect(peek).toContainText("p3 of 7");
+    await expect(peek).toContainText("Yes · 93% · Claude");
     await expect(peek.locator("img.peek-image")).toBeVisible();
     await expect(row(page, "Book the retro room")).toHaveClass(/row-selected/);
+    await expect(row(page, "Book the retro room")).toContainText("Weekly sync · p3"); // without its folder, beside the page
     await page.keyboard.press("Escape");
     await expect(peek).toHaveCount(0);
+  });
+
+  test("pages through the notebook", async ({ page }) => {
+    await row(page, "Book the retro room").getByRole("button", { name: /Weekly sync/ }).click();
+    const peek = page.locator(".peek");
+    await peek.getByRole("button", { name: "Next page" }).click();
+    await expect(peek).toContainText("p4 of 7");
+    await peek.getByRole("button", { name: "Previous page" }).click();
+    await expect(peek).toContainText("p3 of 7");
+  });
+
+  test("Edit text edits the row in the list", async ({ page }) => {
+    await row(page, "Draft the Q4 hiring plan").getByRole("button", { name: /1:1 Priya/ }).click();
+    await page.locator(".peek").getByRole("button", { name: "Edit text" }).click();
+    const field = row(page, "").getByRole("textbox", { name: "Item text" });
+    await expect(field).toBeFocused();
+    await field.fill("Draft the Q1 hiring plan");
+    await field.press("Enter");
+    await expect(row(page, "Draft the Q1 hiring plan")).toBeVisible();
+    await expect(page.locator(".peek")).toBeVisible();
+  });
+
+  test("Enter on a row opens where it came from", async ({ page }) => {
+    await page.keyboard.press("n");
+    await page.keyboard.press("ArrowUp"); // the last row: "Ask Sam whether the venue is booked"
+    await page.keyboard.press("Enter");
+    await expect(page.locator(".peek")).toContainText("Weekly sync");
   });
 
   test("marks it someone else's, by name", async ({ page }) => {

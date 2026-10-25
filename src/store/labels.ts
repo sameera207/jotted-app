@@ -19,6 +19,22 @@ export function passes(item: Item, status: StatusFilter, owner: OwnerFilter): bo
   return true;
 }
 
+/** The notebook a row was written in, as "folder/name"; null for one typed here or added by Claude. */
+export function notebookOf(item: Item): string | null {
+  if (item.origin === "web" || item.origin === "agent" || !item.source.name) return null;
+  return `${item.source.folder.replace(/\/$/, "")}/${item.source.name}`;
+}
+
+/** The notebooks rows came from, for the To-do's notebook filter, by name. */
+export function notebookOptions(items: Item[]): { value: string; label: string }[] {
+  const seen = new Map<string, string>();
+  for (const item of items) {
+    const key = notebookOf(item);
+    if (key && !seen.has(key)) seen.set(key, item.source.name);
+  }
+  return [...seen].map(([value, label]) => ({ value, label })).sort((a, b) => a.label.localeCompare(b.label));
+}
+
 /** The folder path as a person reads it: "/Meeting Notes/2026" → "Meeting Notes › 2026". */
 export function folderLabel(folder: string): string {
   return folder.split("/").filter(Boolean).join(" › ");
@@ -36,7 +52,7 @@ export type SourceLabel =
 
 /** The line under an item's text: where it came from. */
 export function sourceLabel(item: Item, status: Status | null): SourceLabel {
-  if (item.origin === "web") return { kind: "added", text: "Added in Jotted" };
+  if (item.origin === "web") return { kind: "added", text: "Added here" };
   if (item.origin === "agent") {
     // "from Claude · Doc · Platform sync, 29 Sep", or just "Added by Claude" for one it was asked to add.
     const kind = sourceKindLabel(item.source.kind);
@@ -51,6 +67,14 @@ export function sourceLabel(item: Item, status: Status | null): SourceLabel {
   }
   const where = [folderLabel(item.source.folder), item.source.name].filter(Boolean).join(" › ");
   return { kind: "page", text: `${where} · p${item.source.page}` };
+}
+
+/** The source in a narrow list (beside "Where it came from"): the document and page, without its folders. */
+export function shortSourceLabel(item: Item, status: Status | null): string {
+  const label = sourceLabel(item, status);
+  if (label.kind === "todo") return label.text.replace("Written on the To-do", "To-do");
+  if (label.kind === "page") return `${item.source.name} · p${item.source.page}`;
+  return label.text;
 }
 
 export function ownerLabel(item: Item): string | null {

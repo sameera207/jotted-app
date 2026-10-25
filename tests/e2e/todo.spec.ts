@@ -13,10 +13,10 @@ test.beforeEach(async ({ page }) => {
 test("shows the open items with where they came from", async ({ page }) => {
   await expect(page.locator(".row[data-id]")).toHaveCount(7);
   await expect(row(page, "Draft the Q4 hiring plan")).toContainText("Work › 1:1 Priya · p11");
-  await expect(row(page, "Tag the 0.2 release")).toContainText("Added in Jotted");
+  await expect(row(page, "Tag the 0.2 release")).toContainText("Added here");
   await expect(row(page, "Confirm the offsite venue")).toContainText("→ Someone else");
   await expect(page.getByText("Written on the To-do · row 2")).toBeVisible();
-  await expect(page.getByRole("status").filter({ hasText: "Synced with your reMarkable" })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "reMarkable · synced" })).toBeVisible();
 });
 
 test("filters by status and by whose", async ({ page }) => {
@@ -27,6 +27,14 @@ test("filters by status and by whose", async ({ page }) => {
   await page.getByRole("radio", { name: "Done" }).click();
   await page.getByRole("radio", { name: "Everyone" }).click();
   await expect(row(page, "Water the plants")).toBeVisible();
+});
+
+test("filters by notebook", async ({ page }) => {
+  await page.getByRole("combobox", { name: "Notebook" }).selectOption({ label: "Weekly sync" });
+  await expect(page.locator(".row[data-id]")).toHaveCount(3);
+  await expect(row(page, "Draft the Q4 hiring plan")).toHaveCount(0);
+  await page.getByRole("combobox", { name: "Notebook" }).selectOption({ label: "All notebooks" });
+  await expect(page.locator(".row[data-id]")).toHaveCount(7);
 });
 
 test("ticks an item, and it stays ticked", async ({ page }) => {
@@ -41,7 +49,7 @@ test("adds an item from the empty row", async ({ page }) => {
   const input = page.getByRole("textbox", { name: "New item" });
   await input.fill("Call the bank");
   await input.press("Enter");
-  await expect(row(page, "Call the bank")).toContainText("Added in Jotted");
+  await expect(row(page, "Call the bank")).toContainText("Added here");
   await expect(input).toHaveValue("");
   await expect(page.locator(".nav-on .nav-count")).toHaveText("8");
 });
@@ -90,7 +98,7 @@ test("shows Reconnect when the cloud can't be reached", async ({ page }) => {
 test("Check now shows Checking… until the check finishes", async ({ page }) => {
   await page.getByRole("button", { name: "Check now" }).click();
   await expect(page.getByText("Checking…")).toBeVisible();
-  await expect(page.getByText("Synced with your reMarkable just now")).toBeVisible();
+  await expect(page.getByText("reMarkable · synced just now")).toBeVisible();
 });
 
 test("changes made elsewhere arrive live", async ({ page }) => {

@@ -48,11 +48,11 @@ export function Notebooks() {
   const toggle = (path: string) => void toggleFolder(path).then(keep(path));
 
   return (
-    <div className="notebooks">
-      <header className="page-head">
+    <div className="page notebooks">
+      <header className="toolbar">
         <h1>Notebooks</h1>
-        <p>Tick a folder and Jotted reads it, along with every folder inside it. New writing becomes to-do items.</p>
       </header>
+      <p className="page-intro">Tick a folder and Jotted reads it, along with every folder inside it. New writing becomes to-do items.</p>
       {!library && <p className="empty">{failed ? "Couldn't load your notebooks." : "Loading your notebooks…"}</p>}
       {library && settings && (
         <>
